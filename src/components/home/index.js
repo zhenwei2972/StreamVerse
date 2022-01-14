@@ -1,10 +1,8 @@
-import React from "react"
+import React from "react";
 
-const HomePage = props => {
-    return(
-        <div>
-            {process.env.REACT_APP_PRIMARY_AC_KEY}
-        </div>
+const HomePage = () => {
+    return (
+        <p>Home Page</p>
     )
 }
 
