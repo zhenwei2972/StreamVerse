@@ -56,12 +56,13 @@ function AzureCall(): JSX.Element {
     if (!!callAdapter && !!chatAdapter) {
         return (
         <div style={{ height: '100vh', display: 'flex' }}>
-            <div style={{ width: '50vw' }}>
+            {/* <div style={{ width: '50vw' }}>
             <ChatComposite adapter={chatAdapter} />
-            </div>
+            </div> */}
             <div style={{ width: '50vw' }}>
             <CallComposite adapter={callAdapter} />
             </div>
+            <h3>Stream Verse - the language learning game show</h3>
         </div>
         );
     }
