@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/d9630017-9e46-4e61-8b61-3f921ae61e96/resourceGroups/appsvc_linux_centralus_basic/providers/Microsoft.Web/sites/streamverseapp",
+    "appService.deploySubpath": "build"
+}

@@ -8,7 +8,7 @@ function StartPage(): JSX.Element {
   // This will ensure that all the icons are rendered correctly.
 
   registerIcons({ icons: DEFAULT_COMPONENT_ICONS });
-
+  
   return (
     <FluentThemeProvider>
       <CallingComponents />

@@ -92,9 +92,10 @@ export const CallingComponents = (): JSX.Element => {
     return (
         <Stack className={mergeStyles({ height: '100%' })}>
             {/* GridLayout Component relies on the parent's height and width, so it's required to set the height and width on its parent. */}
-            <div style={{ height: '30rem', width: '30rem', border: '1px solid' }}>
+            <div style={{ height: '60rem', width: '30rem', border: '1px solid' }}>
                 <GridLayout>
                     <VideoTile displayName={'Tong Liang'} />
+                    <VideoTile displayName={'Zhen Wei'} />
                 </GridLayout>
             </div>
 
