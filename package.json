@@ -50,10 +50,6 @@
   },
   "devDependencies": {
     "@types/react": "^16.14.21",
-<<<<<<< HEAD
-    "@types/react-modal": "^3.13.1",
-=======
->>>>>>> 930bbd204939463c6fb522c73b7f9646645c4501
     "@types/uuid": "^8.3.4",
     "dotenv": "^14.1.0",
     "typescript": "^4.5.4"

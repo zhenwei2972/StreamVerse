@@ -1,6 +1,7 @@
 
 import { registerIcons } from '@fluentui/react';
 import { CallingComponents } from './callingcomponents';
+
 import { Call, CallAgent } from '@azure/communication-calling';
 import {
   FluentThemeProvider,
@@ -12,20 +13,23 @@ import {
   StatefulCallClient
 } from '@azure/communication-react';
 import { AzureCommunicationTokenCredential } from '@azure/communication-common';
-
+import { v1 as generateGUID } from 'uuid';
+import { GroupLocator } from '@azure/communication-calling';
 import React, { useEffect, useMemo, useState } from 'react';
 function StartPage(): JSX.Element {
   // If you don't want to provide custom icons, you can register the default ones included with the library.
   // This will ensure that all the icons are rendered correctly.
 
   registerIcons({ icons: DEFAULT_COMPONENT_ICONS });
-  const userAccessToken = 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwMyIsIng1dCI6Ikc5WVVVTFMwdlpLQTJUNjFGM1dzYWdCdmFMbyIsInR5cCI6IkpXVCJ9.eyJza3lwZWlkIjoiYWNzOmI5Zjc1ZTBjLTgxZWUtNGNmMS04N2MyLTIwZWFiN2ZjMDFlZl8wMDAwMDAwZi0xYjYyLTRhOTAtZjc3NS1jOTNhMGQwMDA1ZTAiLCJzY3AiOjE3OTIsImNzaSI6IjE2NDI3NDk1MzUiLCJleHAiOjE2NDI4MzU5MzUsImFjc1Njb3BlIjoidm9pcCIsInJlc291cmNlSWQiOiJiOWY3NWUwYy04MWVlLTRjZjEtODdjMi0yMGVhYjdmYzAxZWYiLCJpYXQiOjE2NDI3NDk1MzV9.CVcOwaTVXB4RNiQaO-OQV7w9Cgoiaz4qL2v_a5PCLN5kr3nm5z1PuZzXHrtP8K2uak0SMyuxU1jKEyJqEuI982eWqQyh2fkI-dtnBousPC03cYA3bBN6rMpUPPgBg3MG3CTTvsCQgWnB8wYBBWWbYHfTDx6RVr0mpefNWvX0PLud14g5wZXd9OcNRkAWEbLWtsLpQUXQssI40krCfLX_iu-Mq1EyBDABKrGeJKZgm7j4YpNJdODZUKOeP79j31IVd9lHyVRklRUdy6S2TEp45rqBHj7WBecsNVBvTHN94W3QgKM0Aod4-Xnm0NHeXDayKZ3wuw_Kt31FM9gk-YjEJw';
-  const userId = '8:acs:b9f75e0c-81ee-4cf1-87c2-20eab7fc01ef_0000000f-1b62-4a90-f775-c93a0d0005e0';
+  const userAccessToken = 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwMyIsIng1dCI6Ikc5WVVVTFMwdlpLQTJUNjFGM1dzYWdCdmFMbyIsInR5cCI6IkpXVCJ9.eyJza3lwZWlkIjoiYWNzOmI5Zjc1ZTBjLTgxZWUtNGNmMS04N2MyLTIwZWFiN2ZjMDFlZl8wMDAwMDAwZi0xYmUxLTY4MTctODk3NS1jOTNhMGQwMDFjNjMiLCJzY3AiOjE3OTIsImNzaSI6IjE2NDI3NTc4NjYiLCJleHAiOjE2NDI4NDQyNjYsImFjc1Njb3BlIjoidm9pcCIsInJlc291cmNlSWQiOiJiOWY3NWUwYy04MWVlLTRjZjEtODdjMi0yMGVhYjdmYzAxZWYiLCJpYXQiOjE2NDI3NTc4NjZ9.rfhHXtLLYyVSjHvNPDtLeSkmicZeMUnTMW5HTQp6EoUsr8NMjgSKqt43AndqATpXflFMSjUoadeM0TCo-gKMf4oyo9na2uGyhBmeFHOJjENXdSS5W8ds9AMUGKUqjyCPSNVf2vs4_Zok6lxvKUT1mbi3ycw_MQg42P8f1yYtpsvGiWUFb2uQDXYb-adKL2fu_PjWy3BG30hvGxfgjWIeup9-p2ajqFtdb3WxhvRH6z-fuFBF05Y-6g4Gk8ZnP1iql2P9vg1bcClRD7bbG7xsbflT7ox98YwEUHTO7L0JX9Wi1p4K9yEqHMHIb8ol683eW3Jl0wPGdgOYXEYXp3VSAg';
+  const userId = '8:acs:b9f75e0c-81ee-4cf1-87c2-20eab7fc01ef_0000000f-1be1-6817-8975-c93a0d001c63';
   const tokenCredential = useMemo(() => {
     return new AzureCommunicationTokenCredential(userAccessToken);
   }, [userAccessToken]);
-  const groupId = '61e8f304688d6312b122e577';
-  const displayName = 'Caleb Foster';
+  const createGroupId = (): GroupLocator => ({ groupId: generateGUID() });
+  
+  //const groupId = '61e8f304688d6312b122e577';
+  const displayName = 'Zhen Wei Lee';
 
   const [statefulCallClient, setStatefulCallClient] = useState<StatefulCallClient>();
   const [callAgent, setCallAgent] = useState<CallAgent>();
@@ -50,7 +54,8 @@ function StartPage(): JSX.Element {
 
   useEffect(() => {
     if (callAgent !== undefined) {
-      setCall(callAgent.join({ groupId }));
+      const groupId = createGroupId();
+      setCall(callAgent.join( groupId ));
     }
   }, [callAgent]);
 

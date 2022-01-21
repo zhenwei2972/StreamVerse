@@ -21,7 +21,7 @@ import {
 } from '@azure/communication-react';
 
 import { IContextualMenuProps, mergeStyles, Stack } from '@fluentui/react';
-import React, { useState,Component } from 'react';
+import React, { useState, Component } from 'react';
 const stackTokens: IStackTokens = { childrenGap: 40 };
 
 
@@ -39,10 +39,10 @@ export const ButtonDefaultExample: React.FunctionComponent<IButtonExampleProps> 
 
     return (
         <Stack tokens={stackTokens}>
-            <DefaultButton style = {{marginTop:'2rem',  borderRadius: 0.5}}text="Dog walking a human" onClick={_alertClicked}  />
-            <DefaultButton style = {{marginTop:'2rem',  borderRadius: 0.5}}text="Human walking a dog" onClick={_alertClicked}  />
-            <DefaultButton style = {{marginTop:'2rem',  borderRadius: 0.5}}text="Dog walking a human" onClick={_alertClicked}  />
-            <DefaultButton style = {{marginTop:'2rem',  borderRadius: 0.5}}text="Human walking a dog" onClick={_alertClicked}  />
+            <DefaultButton style={{ marginTop: '2rem', borderRadius: 0.5 }} text="Dog walking a human" onClick={_alertClicked} />
+            <DefaultButton style={{ marginTop: '2rem', borderRadius: 0.5 }} text="Human walking a dog" onClick={_alertClicked} />
+            <DefaultButton style={{ marginTop: '2rem', borderRadius: 0.5 }} text="Dog walking a human" onClick={_alertClicked} />
+            <DefaultButton style={{ marginTop: '2rem', borderRadius: 0.5 }} text="Human walking a dog" onClick={_alertClicked} />
         </Stack>
 
     );
@@ -71,20 +71,21 @@ export const EndCallButtonCustomExample: () => JSX.Element = () => {
         />
     );
 };
+//mock users to test how video gallery performs
 const MockLocalParticipant = {
     userId: 'user1',
     displayName: 'You',
     state: 'Connected',
     isMuted: true
-  };
-  
-  const MockRemoteParticipants = [
+};
+
+const MockRemoteParticipants = [
     {
-      userId: 'user2',
-      displayName: 'Tong Liang'
+        userId: 'user2',
+        displayName: 'Tong Liang'
     }
 
-  ];
+];
 export const CallingComponents = (): JSX.Element => {
     const videoGalleryProps = usePropsFor(VideoGallery);
     const cameraProps = usePropsFor(CameraButton);
@@ -101,29 +102,22 @@ export const CallingComponents = (): JSX.Element => {
     };
 
     return (
-        
+
         <Stack className={mergeStyles({ height: '100%' })}>
             {/* GridLayout Component relies on the parent's height and width, so it's required to set the height and width on its parent. */}
             {cameraProps && <CameraButton {...cameraProps} />}
             {endCallProps && <EndCallButton {...endCallProps} />}
-            <div style={{ width: '30rem', height: '80rem' }}>
-        {videoGalleryProps && <VideoGallery {...videoGalleryProps} />}
-      </div>
+            <div style={{ width: '30rem', height: '30rem' }}>
+                {videoGalleryProps && <VideoGallery {...videoGalleryProps} />}
+            </div>
 
-       
-            
-      {/* <div style={{ height: '60rem', width: '30rem', border: '1px solid' }}>
-                <GridLayout>
-          
-                    <VideoTile displayName={'Tong Liang'} />
-                    <VideoTile displayName={'Zhen Wei'} />
-                </GridLayout>
-            </div> */}
-            <DialogBasicExample/>
+
+
+            <DialogBasicExample />
             {/*TBD 3 dot settings floating button with end call button and such, overlaid ontop of video feed at top right corner. */}
-            
 
-            
+
+
         </Stack>
     );
 };
