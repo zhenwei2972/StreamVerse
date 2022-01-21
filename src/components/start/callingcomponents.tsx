@@ -1,10 +1,15 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
+import DialogBasicExample from "./dialog";
+//import "react-sliding-pane/dist/react-sliding-pane.css";
 import { ControlBarButton } from '@azure/communication-react';
 import { IButtonProps, IStackTokens, Icon, Label, Text } from '@fluentui/react';
 import { DefaultButton, PrimaryButton } from '@fluentui/react/lib/Button';
+
 import {
+    usePropsFor,
+    VideoGallery,
     CameraButton,
     ControlBar,
     EndCallButton,
@@ -16,8 +21,10 @@ import {
 } from '@azure/communication-react';
 
 import { IContextualMenuProps, mergeStyles, Stack } from '@fluentui/react';
-import React, { useState } from 'react';
+import React, { useState,Component } from 'react';
 const stackTokens: IStackTokens = { childrenGap: 40 };
+
+
 export interface IButtonExampleProps {
     // These are set based on the toggles shown above the examples (not needed in real code)
     disabled?: boolean;
@@ -26,13 +33,16 @@ export interface IButtonExampleProps {
 function _alertClicked(): void {
     alert('Clicked');
 }
+
 export const ButtonDefaultExample: React.FunctionComponent<IButtonExampleProps> = props => {
     const { disabled, checked } = props;
 
     return (
-        <Stack horizontal tokens={stackTokens}>
-            <DefaultButton style = {{marginTop:'2rem',  borderRadius: 0.5}}text="Standard" onClick={_alertClicked} allowDisabledFocus disabled={disabled} checked={checked} />
-            <DefaultButton style = {{marginTop:'2rem',  borderRadius: 0.5}}text="Standard" onClick={_alertClicked} allowDisabledFocus disabled={disabled} checked={checked} />
+        <Stack tokens={stackTokens}>
+            <DefaultButton style = {{marginTop:'2rem',  borderRadius: 0.5}}text="Dog walking a human" onClick={_alertClicked}  />
+            <DefaultButton style = {{marginTop:'2rem',  borderRadius: 0.5}}text="Human walking a dog" onClick={_alertClicked}  />
+            <DefaultButton style = {{marginTop:'2rem',  borderRadius: 0.5}}text="Dog walking a human" onClick={_alertClicked}  />
+            <DefaultButton style = {{marginTop:'2rem',  borderRadius: 0.5}}text="Human walking a dog" onClick={_alertClicked}  />
         </Stack>
 
     );
@@ -46,7 +56,7 @@ export const EndCallButtonCustomExample: () => JSX.Element = () => {
     const customOnRenderText = (/*props?: IButtonProps*/): JSX.Element => {
         return (
             <Label key={'endCallCustomLabelKey'} style={{ color: 'black' }}>
-                Walking a dog
+                NIL
             </Label>
         );
     };
@@ -61,8 +71,24 @@ export const EndCallButtonCustomExample: () => JSX.Element = () => {
         />
     );
 };
+const MockLocalParticipant = {
+    userId: 'user1',
+    displayName: 'You',
+    state: 'Connected',
+    isMuted: true
+  };
+  
+  const MockRemoteParticipants = [
+    {
+      userId: 'user2',
+      displayName: 'Tong Liang'
+    }
 
+  ];
 export const CallingComponents = (): JSX.Element => {
+    const videoGalleryProps = usePropsFor(VideoGallery);
+    const cameraProps = usePropsFor(CameraButton);
+    const endCallProps = usePropsFor(EndCallButton);
     const exampleOptionsMenuProps: IContextualMenuProps = {
         items: [
             {
@@ -74,47 +100,30 @@ export const CallingComponents = (): JSX.Element => {
         ]
     };
 
-    const controlBarStyle = {
-        root: {
-            justifyContent: 'center'
-        }
-    };
-    const componentMainDivStyle = {
-        display: 'flex',
-        height: '12rem',
-        alignItems: 'center',
-        justifyContent: 'center'
-    };
-    const [videoButtonChecked, setVideoButtonChecked] = useState<boolean>(false);
-    const [audioButtonChecked, setAudioButtonChecked] = useState<boolean>(false);
-    const [screenshareButtonChecked, setScreenshareButtonChecked] = useState<boolean>(false);
-
     return (
+        
         <Stack className={mergeStyles({ height: '100%' })}>
             {/* GridLayout Component relies on the parent's height and width, so it's required to set the height and width on its parent. */}
-            <div style={{ height: '60rem', width: '30rem', border: '1px solid' }}>
+            {cameraProps && <CameraButton {...cameraProps} />}
+            {endCallProps && <EndCallButton {...endCallProps} />}
+            <div style={{ width: '30rem', height: '80rem' }}>
+        {videoGalleryProps && <VideoGallery {...videoGalleryProps} />}
+      </div>
+
+       
+            
+      {/* <div style={{ height: '60rem', width: '30rem', border: '1px solid' }}>
                 <GridLayout>
+          
                     <VideoTile displayName={'Tong Liang'} />
                     <VideoTile displayName={'Zhen Wei'} />
                 </GridLayout>
-            </div>
+            </div> */}
+            <DialogBasicExample/>
+            {/*TBD 3 dot settings floating button with end call button and such, overlaid ontop of video feed at top right corner. */}
+            
 
-            {/* Control Bar with default set up */}
-            <div style={componentMainDivStyle}>
-                <Stack style={{ marginLeft:'2rem',width: '30rem',opacity: 0.95 }}>  
-                    <ButtonDefaultExample />
-                    <ButtonDefaultExample />
-                </Stack>
-
-                <ControlBar layout="floatingLeft" >
-                  {/*}  <CameraButton checked={videoButtonChecked} onClick={() => setVideoButtonChecked(!videoButtonChecked)} />
-                    <MicrophoneButton checked={audioButtonChecked} onClick={() => setAudioButtonChecked(!audioButtonChecked)} /> */}
-                    <EndCallButton />
-
-                </ControlBar>
-
-
-            </div>
+            
         </Stack>
     );
 };
