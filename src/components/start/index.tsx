@@ -63,13 +63,13 @@ function StartPage(): JSX.Element {
           playerEmail: user.email,
         },config).then(function (response) {
         // handle success
-        console.log(response)
-        let groupId = response.data.groupId.groupId;
+        let groupId = response.data.groupId;
         if (groupId !== undefined && groupId !== null) {
           setCall(callAgent.join( groupId ));
         } else {
           // if no thread or match, create group call
           const groupId = createGroupId();
+          console.log(groupId)
           axios.post(process.env.REACT_APP_API_ENDPOINT + '/chat/createThread', {
               playerEmail: user.email,
               groupId: groupId
