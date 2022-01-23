@@ -1,27 +1,27 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 
-import { useIsAuthenticated } from "@azure/msal-react";
 import { SignInButton } from "./signIn";
 import { SignOutButton } from "./signOut";
 
-import { AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
-
-import ProfileContent from "./profile";
-
 const AuthPage = props => {
-    const isAuthenticated = useIsAuthenticated();
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    const handleAuth = () => {
+        setIsAuthenticated(!isAuthenticated)
+    }
+
+    useEffect(() => {
+        let user = localStorage.getItem("user");
+        if (user != undefined && user != null && user != "") {
+            setIsAuthenticated(true);
+        } else {
+            setIsAuthenticated(false);
+        }
+    }, [isAuthenticated])
 
     return(
         <div>
-            <AuthenticatedTemplate>
-                <ProfileContent />
-                <p>You only see this when you are signed in.</p>
-            </AuthenticatedTemplate>
-            <UnauthenticatedTemplate>
-                <p>You only see this when you are signed out.</p>
-            </UnauthenticatedTemplate>
-            <h6>Test sign msal sign in.</h6>
-            { isAuthenticated ? <SignOutButton /> : <SignInButton /> }
+            { isAuthenticated ? <SignOutButton handleAuth={handleAuth} /> : <SignInButton handleAuth={handleAuth} /> }
         </div>
     )
 }

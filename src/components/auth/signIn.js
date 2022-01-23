@@ -1,22 +1,31 @@
-import React from "react";
-import { useMsal } from "@azure/msal-react";
-import { loginRequest, msalConfig } from "../../active-directory/authConfig";
-import { PrimaryButton } from '@fluentui/react/lib/Button';
-
-function handleLogin(instance) {
-    console.log(msalConfig.auth.clientId);
-    instance.loginPopup(loginRequest).catch(e => {
-        console.error(e);
-    });
-}
+import React, { useState } from "react";
+import { PrimaryButton, TextField } from '@fluentui/react/lib';
+import axios from 'axios';
 
 /**
  * Renders a button which, when selected, will open a popup for login
  */
-export const SignInButton = () => {
-    const { instance } = useMsal();
+export const SignInButton = props => {
+    const [email, setEmail] = useState();
+    const [password, setPassword] = useState();
+
+    const handleLogin = () => {
+        axios.post(process.env.REACT_APP_API_ENDPOINT + '/auth/login', {
+            email: email,
+            password: password
+        }).then(function (response) {
+            localStorage.setItem("user", JSON.stringify(response.data));
+            props.handleAuth();
+        }).catch(function (error) {
+            console.log(error);
+        });
+    }
 
     return (
-        <PrimaryButton text="Sign in." onClick={() => handleLogin(instance)} />
+        <div>
+            <TextField onChange={e => setEmail(e.target.value)} name="email" label="Email" />
+            <TextField onChange={e => setPassword(e.target.value)} name="password" label="Password" />
+            <PrimaryButton text="Sign in." onClick={handleLogin} />
+        </div>
     );
 }
