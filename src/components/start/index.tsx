@@ -59,14 +59,12 @@ function StartPage(): JSX.Element {
           headers: { Authorization: `Bearer ${user.token}` }
       };
       // find thread
-      axios.get(process.env.REACT_APP_API_ENDPOINT + '/chat/findChat', {
-        headers: { Authorization: `Bearer ${user.token}` },
-        params: {
+      axios.post(process.env.REACT_APP_API_ENDPOINT + '/chat/findChat',{
           playerEmail: user.email,
-        },
-      }).then(function (response) {
+        },config).then(function (response) {
         // handle success
-        let groupId = response.data.groupId;
+        console.log(response)
+        let groupId = response.data.groupId.groupId;
         if (groupId !== undefined && groupId !== null) {
           setCall(callAgent.join( groupId ));
         } else {
