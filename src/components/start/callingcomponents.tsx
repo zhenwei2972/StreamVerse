@@ -24,12 +24,12 @@ import { IContextualMenuProps, mergeStyles, Stack } from '@fluentui/react';
 import React, { useState, Component } from 'react';
 const stackTokens: IStackTokens = { childrenGap: 40 };
 
-
 export interface IButtonExampleProps {
     // These are set based on the toggles shown above the examples (not needed in real code)
     disabled?: boolean;
     checked?: boolean;
 }
+
 function _alertClicked(): void {
     alert('Clicked');
 }
@@ -68,9 +68,11 @@ export const EndCallButtonCustomExample: () => JSX.Element = () => {
             showLabel={true}
             onRenderIcon={customOnRenderIcon}
             onRenderText={customOnRenderText}
+            onClick={()=>""}
         />
     );
 };
+
 //mock users to test how video gallery performs
 const MockLocalParticipant = {
     userId: 'user1',
@@ -86,7 +88,8 @@ const MockRemoteParticipants = [
     }
 
 ];
-export const CallingComponents = (): JSX.Element => {
+
+export const CallingComponents = (props : any): JSX.Element => {
     const videoGalleryProps = usePropsFor(VideoGallery);
     const cameraProps = usePropsFor(CameraButton);
     const endCallProps = usePropsFor(EndCallButton);
@@ -102,7 +105,6 @@ export const CallingComponents = (): JSX.Element => {
     };
 
     return (
-
         <Stack className={mergeStyles({ height: '100%' })}>
             {/* GridLayout Component relies on the parent's height and width, so it's required to set the height and width on its parent. */}
             {cameraProps && <CameraButton {...cameraProps} />}
@@ -111,12 +113,8 @@ export const CallingComponents = (): JSX.Element => {
                 {videoGalleryProps && <VideoGallery {...videoGalleryProps} />}
             </div>
 
-
-
             <DialogBasicExample />
             {/*TBD 3 dot settings floating button with end call button and such, overlaid ontop of video feed at top right corner. */}
-
-
 
         </Stack>
     );

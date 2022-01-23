@@ -1,6 +1,7 @@
 import { registerIcons } from '@fluentui/react';
+import { PrimaryButton } from '@fluentui/react/lib';
 import { CallingComponents } from './callingcomponents';
-import { Call, CallAgent } from '@azure/communication-calling';
+import { Call, CallAgent, IncomingCall } from '@azure/communication-calling';
 import {
   FluentThemeProvider,
   DEFAULT_COMPONENT_ICONS,
@@ -15,13 +16,13 @@ import { v1 as generateGUID } from 'uuid';
 import { GroupLocator } from '@azure/communication-calling';
 import React, { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
+import { useNavigate  } from "react-router-dom";
 
 function StartPage(): JSX.Element {
   // If you don't want to provide custom icons, you can register the default ones included with the library.
   // This will ensure that all the icons are rendered correctly.
-
+  const navigate = useNavigate ();
   registerIcons({ icons: DEFAULT_COMPONENT_ICONS });
-  console.log(localStorage.getItem("user") || "")
   const user = JSON.parse(localStorage.getItem("user") || "");
   const userAccessToken = user.spoolToken;
   const userId = user.spoolID;
@@ -35,6 +36,24 @@ function StartPage(): JSX.Element {
   const [statefulCallClient, setStatefulCallClient] = useState<StatefulCallClient>();
   const [callAgent, setCallAgent] = useState<CallAgent>();
   const [call, setCall] = useState<Call>();
+  const [threadId, setThreadId] = useState();
+
+  const config = {
+    headers: { Authorization: `Bearer ${user.token}` }
+  };
+
+  // end call
+  const endCallHandler = () => {
+    console.log("Ending call.");
+    axios.post(process.env.REACT_APP_API_ENDPOINT + '/chat/endChat',
+    {
+      threadId: threadId
+    }, config).then(response => {
+      navigate('/', { replace: true })
+    }).catch(function (error) {
+      console.log(error);
+    });
+  }
 
   useEffect(() => {
     setStatefulCallClient(
@@ -55,9 +74,6 @@ function StartPage(): JSX.Element {
 
   useEffect(() => {
     if (callAgent !== undefined) {
-      const config = {
-          headers: { Authorization: `Bearer ${user.token}` }
-      };
       // find thread
       axios.post(process.env.REACT_APP_API_ENDPOINT + '/chat/findChat',{
           playerEmail: user.email,
@@ -65,17 +81,20 @@ function StartPage(): JSX.Element {
         // handle success
         let groupId = response.data.groupId;
         if (groupId !== undefined && groupId !== null) {
-          setCall(callAgent.join( groupId ));
+          console.log("Group ID found: " + groupId)
+          setThreadId(response.data.threadId);
+          setCall(callAgent.join( { groupId: groupId } ));
         } else {
           // if no thread or match, create group call
-          const groupId = createGroupId();
-          console.log(groupId)
+          let groupId = createGroupId();
           axios.post(process.env.REACT_APP_API_ENDPOINT + '/chat/createThread', {
               playerEmail: user.email,
               groupId: groupId
-          },config).then(function (response) {
-              console.log(response)
-            setCall(callAgent.join( groupId ));
+            },
+            config
+          ).then(function (response) {
+              setThreadId(response.data.threadId);
+              setCall(callAgent.join( groupId ));
           }).catch(function (error) {
               console.log(error);
           });
@@ -98,7 +117,9 @@ function StartPage(): JSX.Element {
               <CallAgentProvider callAgent={callAgent}>
                 {call && (
                   <CallProvider call={call}>
-                   <CallingComponents/>
+                   <CallingComponents />
+                   
+                  <PrimaryButton text="End Call" onClick={endCallHandler} />
                   </CallProvider>
                 )}
               </CallAgentProvider>
@@ -109,4 +130,5 @@ function StartPage(): JSX.Element {
     </>
   );
 }
+
 export default StartPage;
