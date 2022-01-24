@@ -5,6 +5,12 @@ const HomePage = () => {
 
     return (
         <div>
+            <Link to="/auth">
+            <button type="button">
+                login
+            </button>
+            </Link>
+
             <p>Home Page</p>
             <Link to="/call">
             <button type="button">
@@ -17,6 +23,7 @@ const HomePage = () => {
                 start
             </button>
             </Link>
+           
         </div>
     )
 }
