@@ -21,6 +21,7 @@ import { useNavigate  } from "react-router-dom";
 function StartPage(): JSX.Element {
   // If you don't want to provide custom icons, you can register the default ones included with the library.
   // This will ensure that all the icons are rendered correctly.
+  const websocketUrl = process.env.REACT_APP_API_SOCKET || "";
   const navigate = useNavigate ();
   registerIcons({ icons: DEFAULT_COMPONENT_ICONS });
   const user = JSON.parse(localStorage.getItem("user") || "");
@@ -37,16 +38,64 @@ function StartPage(): JSX.Element {
   const [callAgent, setCallAgent] = useState<CallAgent>();
   const [call, setCall] = useState<Call>();
   const [threadId, setThreadId] = useState();
+  const [groupId, setGroupId] = useState('');
 
+  // token bearer authorization header
   const config = {
     headers: { Authorization: `Bearer ${user.token}` }
   };
 
-  // end call
+  // handle gamestate
+  const [gameState, setGameState] = useState({
+    'currentPlayer': user.name,
+    'thisCanBeAnImageId': 1,
+  });
+  const [ws, setWs] = useState(new WebSocket(websocketUrl));
+
+  // submit gamestate to server and other clients
+  // call this method 
+  // you can update the game state anywhere else by calling setGameState hooks
+  const sendGameStateHandler = () => {
+    ws.send(JSON.stringify({ type: "update", groupId: groupId, gameState: gameState}));
+  }
+
+  // called after joining group call to register client at server websocket
+  const initGameState = (guid: string) => {
+    ws.send(JSON.stringify({ type: "update", groupId: guid, gameState: gameState}));
+  }
+
+  // send and receive gamestate from backend
+  useEffect(() => {
+    ws.onopen = () => {
+      console.log('WebSocket Connected');
+    }
+  
+    ws.onmessage = (e) => {
+      const gamestate = JSON.parse(e.data);
+      // over here can update game state
+      // for currentplayer use user.name instead of whatever that gets passed here
+      setGameState({
+        'currentPlayer': user.name,
+        'thisCanBeAnImageId': 1,
+      });
+      console.log(gamestate);
+    }
+  
+    return () => {
+      ws.onclose = () => {
+        console.log('WebSocket Disconnected');
+        setWs(new WebSocket(websocketUrl));
+      }
+    }
+  }, [ws.onmessage, ws.onopen, ws.onclose, gameState]);
+  // end of gamestate
+
+  // end call: to be called to remove ongoing thread from database
   const endCallHandler = () => {
-    console.log("Ending call.");
-    axios.post(process.env.REACT_APP_API_ENDPOINT + '/chat/endChat',
-    {
+    ws.send(JSON.stringify({ type: "end", groupId: groupId }));
+    ws.close() // gracefully shutdown websocket after default 30sec timeout. terminate() for alternative.
+
+    axios.post(process.env.REACT_APP_API_ENDPOINT + '/chat/endChat', {
       threadId: threadId
     }, config).then(response => {
       navigate('/', { replace: true })
@@ -79,22 +128,26 @@ function StartPage(): JSX.Element {
           playerEmail: user.email,
         },config).then(function (response) {
         // handle success
-        let groupId = response.data.groupId;
-        if (groupId !== undefined && groupId !== null) {
-          console.log("Group ID found: " + groupId)
+        let guid = response.data.groupId;
+        if (guid !== undefined && guid !== null) {
           setThreadId(response.data.threadId);
-          setCall(callAgent.join( { groupId: groupId } ));
+          // setGroupId(guid);
+          setCall(callAgent.join( { groupId: guid } ));
+          initGameState(guid);
+          setGroupId(guid);
         } else {
           // if no thread or match, create group call
-          let groupId = createGroupId();
+          let guid = createGroupId();
           axios.post(process.env.REACT_APP_API_ENDPOINT + '/chat/createThread', {
               playerEmail: user.email,
-              groupId: groupId
+              groupId: guid.groupId
             },
             config
           ).then(function (response) {
               setThreadId(response.data.threadId);
-              setCall(callAgent.join( groupId ));
+              setCall(callAgent.join( guid ));
+              initGameState(guid.groupId);
+              setGroupId(guid.groupId);
           }).catch(function (error) {
               console.log(error);
           });
@@ -118,8 +171,8 @@ function StartPage(): JSX.Element {
                 {call && (
                   <CallProvider call={call}>
                    <CallingComponents />
-                   
                   <PrimaryButton text="End Call" onClick={endCallHandler} />
+                  <PrimaryButton text="Test Gamestate" onClick={sendGameStateHandler} />
                   </CallProvider>
                 )}
               </CallAgentProvider>
