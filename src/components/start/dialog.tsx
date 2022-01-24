@@ -7,6 +7,7 @@ import { Toggle } from '@fluentui/react/lib/Toggle';
 import { ContextualMenu } from '@fluentui/react/lib/ContextualMenu';
 import { useId, useBoolean } from '@fluentui/react-hooks';
 import { Stack, IStackTokens } from '@fluentui/react';
+import axios from 'axios';
 
 
 const dialogStyles = { main: { maxWidth: 450 } };
@@ -33,6 +34,15 @@ export interface IButtonExampleProps {
     checked?: boolean;
 }
 function _alertClicked(): void {
+  axios.post(process.env.REACT_APP_API_ENDPOINT + '/chat/updateGamestate', 
+  {
+    GameState : "newGameState",
+    turn: "",
+  }).then(function (response) {
+    localStorage.setItem("user", JSON.stringify(response.data));
+}).catch(function (error) {
+    console.log(error);
+});
     alert('Clicked');
 }
 

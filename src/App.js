@@ -13,9 +13,9 @@ function App() {
   return (
     <Router>
       <Routes>
+        <Route path path={ROUTES.AUTH} element={<AuthPage/>} />
         <Route exact path={ROUTES.HOME} element={<HomePage/>} /> 
         <Route path path={ROUTES.CALL} element={<AzureCall/>} />
-        <Route path path={ROUTES.AUTH} element={<AuthPage/>} />
         <Route path path={ROUTES.START} element ={<StartPage/>} />
       </Routes>
     </Router>
