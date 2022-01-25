@@ -8,7 +8,8 @@ import { ContextualMenu } from '@fluentui/react/lib/ContextualMenu';
 import { useId, useBoolean } from '@fluentui/react-hooks';
 import { Stack, IStackTokens } from '@fluentui/react';
 import axios from 'axios';
-
+import { ChoiceGroup, IChoiceGroupOption } from '@fluentui/react/lib/ChoiceGroup';
+const img = require("../../img.png");
 
 const dialogStyles = { main: { maxWidth: 450 } };
 const dragOptions = {
@@ -26,7 +27,55 @@ const dialogContentProps = {
 };
 
 const stackTokens: IStackTokens = { childrenGap: 40 };
-
+// const options: IChoiceGroupOption[] = [
+//   {
+//     key: '1',
+//     imageSrc: img,
+//     imageAlt: 'Bar chart',
+//     selectedImageSrc: img,
+//     imageSize: { width: 150, height: 60 },
+//     text: '',
+//   },
+//   {
+//     key: '2',
+//     imageSrc: img,
+//     imageAlt: 'Pie chart',
+//     selectedImageSrc: img,
+//     imageSize: { width: 150, height: 60 },
+//     text: '',
+//   },
+//   {
+//     key: '3',
+//     imageSrc: img,
+//     imageAlt: 'Pie chart',
+//     selectedImageSrc: img,
+//     imageSize: { width: 60, height: 60   },
+//     text: '',
+//   },
+//   {
+//     key: '4',
+//     imageSrc: img,
+//     imageAlt: 'Pie chart',
+//     selectedImageSrc: img,
+//     imageSize: { width: 60, height: 60  },
+//     text: '',
+//   },
+// ];
+// export const ChoiceGroupImageExample: React.FunctionComponent = () => {
+//   return <ChoiceGroup styles={{
+//     flexContainer: [
+//       {
+//         backgroundColor: "#ADD8E6",
+//         selectors: {
+//           ".ms-ChoiceField": {
+//             color: "#00008B",
+//             fontWeight: 600
+//           }
+//         }
+//       }
+//     ]
+//   }} label="Pick one image" defaultSelectedKey="1" options={options} />;
+// };
 
 export interface IButtonExampleProps {
     // These are set based on the toggles shown above the examples (not needed in real code)
@@ -50,12 +99,18 @@ export const ButtonDefaultExample: React.FunctionComponent<IButtonExampleProps> 
     const { disabled, checked } = props;
 
     return (
-        <Stack tokens={stackTokens}>
-            <DefaultButton style = {{marginTop:'2rem',  borderRadius: 0.5}}text="Dog walking a human" onClick={_alertClicked}  />
-            <DefaultButton style = {{marginTop:'2rem',  borderRadius: 0.5}}text="Human walking a dog" onClick={_alertClicked}  />
-            <DefaultButton style = {{marginTop:'2rem',  borderRadius: 0.5}}text="Dog walking a human" onClick={_alertClicked}  />
-            <DefaultButton style = {{marginTop:'2rem',  borderRadius: 0.5}}text="Human walking a dog" onClick={_alertClicked}  />
-        </Stack>
+      <><button><img src={img} alt="my image" onClick={_alertClicked} /></button><button><img src={img} alt="my image" /></button><button><img src={img} alt="my image" /></button><button><img src={img} alt="my image" /></button></>
+      // <><div><ChoiceGroupImageExample></ChoiceGroupImageExample></div></>
+      //<Stack tokens={stackTokens}>
+      //   <DefaultButton style={{ marginTop: '2rem', borderRadius: 0.5 }} text="Dog walking a human" onClick={_alertClicked} />
+      //   <DefaultButton style={{ marginTop: '2rem', borderRadius: 0.5 }} text="Human walking a dog" onClick={_alertClicked} />
+      //   <DefaultButton style={{ marginTop: '2rem', borderRadius: 0.5 }} text="Dog walking a human" onClick={_alertClicked} />
+      //   <DefaultButton style={{ marginTop: '2rem', borderRadius: 0.5 }} text="Human walking a dog" onClick={_alertClicked} />
+
+
+
+      // </Stack>
+       
 
     );
 };
