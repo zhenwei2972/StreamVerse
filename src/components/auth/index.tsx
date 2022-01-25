@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react"
 
 import { SignInButton } from "./signIn";
 import { SignOutButton } from "./signOut";
-
-const AuthPage = props => {
+const logo = require("../../svlogo.PNG");
+const AuthPage = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     const handleAuth = () => {
@@ -19,10 +19,19 @@ const AuthPage = props => {
         }
     }, [isAuthenticated])
 
-    return(
-        <div>
-            { isAuthenticated ? <SignOutButton handleAuth={handleAuth} /> : <SignInButton handleAuth={handleAuth} /> }
-        </div>
+    return (
+            <><img src={logo} style={{
+                width: 180,
+                height: 180,
+                alignContent: "center",
+                display: 'flex',
+                justifyContent: 'center',
+                marginLeft: 100,
+                marginTop:130,
+            }} />
+            <div>
+                {isAuthenticated ? <SignOutButton handleAuth={handleAuth} /> : <SignInButton handleAuth={handleAuth} />}
+            </div></>
     )
 }
 

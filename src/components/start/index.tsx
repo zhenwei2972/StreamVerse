@@ -9,7 +9,8 @@ import {
   CallAgentProvider,
   CallProvider,
   createStatefulCallClient,
-  StatefulCallClient
+  StatefulCallClient,
+  ControlBar,
 } from '@azure/communication-react';
 import { AzureCommunicationTokenCredential } from '@azure/communication-common';
 import { v1 as generateGUID } from 'uuid';
@@ -17,8 +18,15 @@ import { GroupLocator } from '@azure/communication-calling';
 import React, { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { useNavigate  } from "react-router-dom";
-
+import { CommandBar, ICommandBarItemProps } from '@fluentui/react/lib/CommandBar';
 function StartPage(): JSX.Element {
+  const componentMainDivStyle = {
+    display: 'flex',
+    border: 'solid 0.5px lightgray',
+    height: '24rem',
+    alignItems: 'center',
+    justifyContent: 'center'
+  };
   // If you don't want to provide custom icons, you can register the default ones included with the library.
   // This will ensure that all the icons are rendered correctly.
   const websocketUrl = process.env.REACT_APP_API_SOCKET || "";
@@ -171,8 +179,12 @@ function StartPage(): JSX.Element {
                 {call && (
                   <CallProvider call={call}>
                    <CallingComponents />
+                   <div style={componentMainDivStyle}>
+                  <ControlBar layout="floatingTop">
                   <PrimaryButton text="End Call" onClick={endCallHandler} />
                   <PrimaryButton text="Test Gamestate" onClick={sendGameStateHandler} />
+                    </ControlBar>
+                    </div>
                   </CallProvider>
                 )}
               </CallAgentProvider>

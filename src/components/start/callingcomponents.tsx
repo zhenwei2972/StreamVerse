@@ -72,7 +72,13 @@ export const EndCallButtonCustomExample: () => JSX.Element = () => {
         />
     );
 };
-
+const componentMainDivStyle = {
+    display: 'flex',
+    border: 'solid 0.5px lightgray',
+    height: '24rem',
+    alignItems: 'center',
+    justifyContent: 'center'
+  };
 //mock users to test how video gallery performs
 const MockLocalParticipant = {
     userId: 'user1',
@@ -93,26 +99,20 @@ export const CallingComponents = (props : any): JSX.Element => {
     const videoGalleryProps = usePropsFor(VideoGallery);
     const cameraProps = usePropsFor(CameraButton);
     const endCallProps = usePropsFor(EndCallButton);
-    const exampleOptionsMenuProps: IContextualMenuProps = {
-        items: [
-            {
-                key: '1',
-                name: 'Choose Camera',
-                iconProps: { iconName: 'LocationCircle' },
-                onClick: () => alert('Choose Camera Menu Item Clicked!')
-            }
-        ]
-    };
 
     return (
         <Stack className={mergeStyles({ height: '100%' })}>
             {/* GridLayout Component relies on the parent's height and width, so it's required to set the height and width on its parent. */}
+           
+            <ControlBar layout="floatingTop">
             {cameraProps && <CameraButton {...cameraProps} />}
             {endCallProps && <EndCallButton {...endCallProps} />}
-            <div style={{ width: '30rem', height: '30rem' }}>
+            </ControlBar>
+          
+            <div style={{ width: '25rem', height: '35rem' }}>
                 {videoGalleryProps && <VideoGallery {...videoGalleryProps} />}
             </div>
-
+           
             <DialogBasicExample />
             {/*TBD 3 dot settings floating button with end call button and such, overlaid ontop of video feed at top right corner. */}
 

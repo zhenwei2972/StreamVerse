@@ -7,7 +7,9 @@
       "target": "es6",
       "jsx": "react",
       "esModuleInterop": true,
-      "strictNullChecks": true
+      "strictNullChecks": true,
+      "allowJs": true,
+      "checkJs": false,
     },
     "include": [
       "./src/**/*"
