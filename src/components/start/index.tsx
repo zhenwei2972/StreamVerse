@@ -11,13 +11,20 @@ import {
   createStatefulCallClient,
   StatefulCallClient,
   ControlBar,
+  EndCallButton,
+  usePropsFor,
+  CameraButton,
+  DevicesButton,
 } from '@azure/communication-react';
 import { AzureCommunicationTokenCredential } from '@azure/communication-common';
 import { v1 as generateGUID } from 'uuid';
+import { EndCallBtn } from './callingcomponents';
+import { CameraBtn } from './callingcomponents';
 import { GroupLocator } from '@azure/communication-calling';
 import React, { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { useNavigate  } from "react-router-dom";
+import { IContextualMenuProps, mergeStyles, Stack } from '@fluentui/react';
 import { CommandBar, ICommandBarItemProps } from '@fluentui/react/lib/CommandBar';
 function StartPage(): JSX.Element {
   const componentMainDivStyle = {
@@ -47,7 +54,7 @@ function StartPage(): JSX.Element {
   const [call, setCall] = useState<Call>();
   const [threadId, setThreadId] = useState();
   const [groupId, setGroupId] = useState('');
-
+ 
   // token bearer authorization header
   const config = {
     headers: { Authorization: `Bearer ${user.token}` }
@@ -178,13 +185,16 @@ function StartPage(): JSX.Element {
               <CallAgentProvider callAgent={callAgent}>
                 {call && (
                   <CallProvider call={call}>
-                   <CallingComponents />
-                   <div style={componentMainDivStyle}>
+                      <Stack className={mergeStyles({ height: '100%' })}>
                   <ControlBar layout="floatingTop">
-                  <PrimaryButton text="End Call" onClick={endCallHandler} />
-                  <PrimaryButton text="Test Gamestate" onClick={sendGameStateHandler} />
+                  <EndCallButton onClick={endCallHandler}></EndCallButton>
+                  <CameraBtn></CameraBtn>
+                  <DevicesButton onClick={sendGameStateHandler} ></DevicesButton>
+                  
                     </ControlBar>
-                    </div>
+                    </Stack>
+                   <CallingComponents />
+                 
                   </CallProvider>
                 )}
               </CallAgentProvider>

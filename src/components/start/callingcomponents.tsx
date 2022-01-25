@@ -94,19 +94,37 @@ const MockRemoteParticipants = [
     }
 
 ];
+export const EndCallBtn = (props:any): JSX.Element =>{
+   
+    const endCallProps = usePropsFor(EndCallButton);
+    return (
+        <div>
+        {endCallProps && <EndCallButton {...endCallProps} />}
+        </div>
+    );
+};
+export const CameraBtn = (props:any): JSX.Element =>{
+   
+    const cameraProps = usePropsFor(CameraButton);
+    return (
+        <div>
+         {cameraProps && <CameraButton {...cameraProps} />}
+        </div>
+    );
+};
 
 export const CallingComponents = (props : any): JSX.Element => {
     const videoGalleryProps = usePropsFor(VideoGallery);
     const cameraProps = usePropsFor(CameraButton);
-    const endCallProps = usePropsFor(EndCallButton);
+  
 
     return (
         <Stack className={mergeStyles({ height: '100%' })}>
             {/* GridLayout Component relies on the parent's height and width, so it's required to set the height and width on its parent. */}
            
             <ControlBar layout="floatingTop">
-            {cameraProps && <CameraButton {...cameraProps} />}
-            {endCallProps && <EndCallButton {...endCallProps} />}
+           
+          
             </ControlBar>
           
             <div style={{ width: '25rem', height: '35rem' }}>
