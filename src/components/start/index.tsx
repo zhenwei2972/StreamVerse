@@ -1,3 +1,4 @@
+import DialogBasicExample from "./dialog";
 import { registerIcons } from '@fluentui/react';
 import { PrimaryButton } from '@fluentui/react/lib';
 import { CallingComponents } from './callingcomponents';
@@ -66,7 +67,7 @@ function StartPage(): JSX.Element {
     'thisCanBeAnImageId': 1,
   });
   const [ws, setWs] = useState(new WebSocket(websocketUrl));
-
+  const updateChildGS = (newGS: React.SetStateAction<{ currentPlayer: any; thisCanBeAnImageId: number; }>) =>{setGameState(newGS)}
   // submit gamestate to server and other clients
   // call this method 
   // you can update the game state anywhere else by calling setGameState hooks
@@ -190,10 +191,13 @@ function StartPage(): JSX.Element {
                   <EndCallButton onClick={endCallHandler}></EndCallButton>
                   <CameraBtn></CameraBtn>
                   <DevicesButton onClick={sendGameStateHandler} ></DevicesButton>
-                  
+                 
                     </ControlBar>
                     </Stack>
                    <CallingComponents />
+                   <Stack className={mergeStyles({ height: '100%' })}>
+                   <DialogBasicExample {...gameState } />
+                   </Stack>
                  
                   </CallProvider>
                 )}

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useState} from 'react';
+import { useState } from 'react';
 import { Dialog, DialogType, DialogFooter } from '@fluentui/react/lib/Dialog';
 import { PrimaryButton, DefaultButton } from '@fluentui/react/lib/Button';
 import { hiddenContentStyle, mergeStyles } from '@fluentui/react/lib/Styling';
@@ -21,100 +21,86 @@ const dragOptions = {
 const screenReaderOnly = mergeStyles(hiddenContentStyle);
 const dialogContentProps = {
   type: DialogType.normal,
-  title: 'default question',
+  title: 'Pick the right image! Speak only chinese',
   closeButtonAriaLabel: 'Close',
   //subText: 'Do you want to send this message without a subject?',
 };
 
 const stackTokens: IStackTokens = { childrenGap: 40 };
-// const options: IChoiceGroupOption[] = [
-//   {
-//     key: '1',
-//     imageSrc: img,
-//     imageAlt: 'Bar chart',
-//     selectedImageSrc: img,
-//     imageSize: { width: 150, height: 60 },
-//     text: '',
-//   },
-//   {
-//     key: '2',
-//     imageSrc: img,
-//     imageAlt: 'Pie chart',
-//     selectedImageSrc: img,
-//     imageSize: { width: 150, height: 60 },
-//     text: '',
-//   },
-//   {
-//     key: '3',
-//     imageSrc: img,
-//     imageAlt: 'Pie chart',
-//     selectedImageSrc: img,
-//     imageSize: { width: 60, height: 60   },
-//     text: '',
-//   },
-//   {
-//     key: '4',
-//     imageSrc: img,
-//     imageAlt: 'Pie chart',
-//     selectedImageSrc: img,
-//     imageSize: { width: 60, height: 60  },
-//     text: '',
-//   },
-// ];
-// export const ChoiceGroupImageExample: React.FunctionComponent = () => {
-//   return <ChoiceGroup styles={{
-//     flexContainer: [
-//       {
-//         backgroundColor: "#ADD8E6",
-//         selectors: {
-//           ".ms-ChoiceField": {
-//             color: "#00008B",
-//             fontWeight: 600
-//           }
-//         }
-//       }
-//     ]
-//   }} label="Pick one image" defaultSelectedKey="1" options={options} />;
-// };
 
-export interface IButtonExampleProps {
-    // These are set based on the toggles shown above the examples (not needed in real code)
-    disabled?: boolean;
-    checked?: boolean;
-}
-function _alertClicked(): void {
-  axios.post(process.env.REACT_APP_API_ENDPOINT + '/chat/updateGamestate', 
-  {
-    GameState : "newGameState",
-    turn: "",
-  }).then(function (response) {
-    localStorage.setItem("user", JSON.stringify(response.data));
-}).catch(function (error) {
-    console.log(error);
-});
-    alert('Clicked');
+
+export interface GameState {
+  // These are set based on the toggles shown above the examples (not needed in real code)
+  currentPlayer?: string;
+  thisCanBeAnImageId?: number;
+  // checked?: boolean;
+  // websocket?: WebSocket;
 }
 
-export const ButtonDefaultExample: React.FunctionComponent<IButtonExampleProps> = props => {
-    const { disabled, checked } = props;
-
-    return (
-      <><button><img src={img} alt="my image" onClick={_alertClicked} /></button><button><img src={img} alt="my image" /></button><button><img src={img} alt="my image" /></button><button><img src={img} alt="my image" /></button></>
-      // <><div><ChoiceGroupImageExample></ChoiceGroupImageExample></div></>
-      //<Stack tokens={stackTokens}>
-      //   <DefaultButton style={{ marginTop: '2rem', borderRadius: 0.5 }} text="Dog walking a human" onClick={_alertClicked} />
-      //   <DefaultButton style={{ marginTop: '2rem', borderRadius: 0.5 }} text="Human walking a dog" onClick={_alertClicked} />
-      //   <DefaultButton style={{ marginTop: '2rem', borderRadius: 0.5 }} text="Dog walking a human" onClick={_alertClicked} />
-      //   <DefaultButton style={{ marginTop: '2rem', borderRadius: 0.5 }} text="Human walking a dog" onClick={_alertClicked} />
 
 
+export const ButtonDefaultExample: React.FunctionComponent<GameState> = props => {
+  const { currentPlayer, thisCanBeAnImageId } = props;
+  function _alertClicked(ImageID:number): void {
+    //send the image prop over 
+    alert('Clicked on' + ImageID);
+    if(ImageID===thisCanBeAnImageId)
+    {
+      console.log("You are right!")
+    }
+    else{
+      console.log("You are wrong!")
+    }
+  }
+  const allImages = [
+    {
+      number: 1,
+      image: "img"
+    },
+    {
+      number: 2,
+      image: "img"
+    },
+    {
+      number: 3,
+      image: "img"
+    },
+    {
+      number: 4,
+      image: "img"
+    },
+    {
+      number: 5,
+      image: "img"
+    },
+    {
+      number: 6,
+      image: "img"
+    },
+  ]
+  const [startIndex, setStart ] = useState();
+  let subset = allImages.slice(0, 4)
+  
+  return (
+    <>
+      {subset.map((item, index) => (
+        <button key={index} >
+          <img
+            src={require('../../' +
+              item.image +
+              '.png')}
+            className="img-fluid"
+            onClick={()=>_alertClicked(item.number)}
+          />
 
-      // </Stack>
-       
+        </button>
+      ))}
+    </>
 
-    );
+  );
 };
-export const DialogBasicExample: React.FunctionComponent = () => {
+export const DialogBasicExample: React.FunctionComponent<GameState> = props => {
+  const { currentPlayer, thisCanBeAnImageId } = props;
   const [hideDialog, { toggle: toggleHideDialog }] = useBoolean(true);
   const [isDraggable, { toggle: toggleIsDraggable }] = useBoolean(true);
   const labelId: string = useId('dialogLabel');
@@ -123,8 +109,8 @@ export const DialogBasicExample: React.FunctionComponent = () => {
   const handleSubmit = (evt: { preventDefault: () => void; }) => {
     evt.preventDefault();
     alert(`Fetch question ${question}`)
-}
-
+  }
+  { console.log(thisCanBeAnImageId) }
 
   const modalProps = React.useMemo(
     () => ({
@@ -139,8 +125,8 @@ export const DialogBasicExample: React.FunctionComponent = () => {
 
   return (
     <>
-      
-      <DefaultButton secondaryText="Open sesame" onClick={toggleHideDialog} text="Answer" />
+      <p>{currentPlayer}</p>
+      <DefaultButton secondaryText="Open sesame" onClick={toggleHideDialog} text="start game" />
       <label id={labelId} className={screenReaderOnly}>
         My sample label
       </label>
@@ -155,7 +141,7 @@ export const DialogBasicExample: React.FunctionComponent = () => {
         modalProps={modalProps}
       >
         <DialogFooter>
-        <ButtonDefaultExample/>
+          <ButtonDefaultExample {...props} />
         </DialogFooter>
       </Dialog>
     </>
