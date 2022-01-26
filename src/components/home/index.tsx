@@ -3,7 +3,10 @@ import { Link } from 'react-router-dom'
 import { DefaultButton, PrimaryButton } from '@fluentui/react/lib/Button';
 import { Stack, IStackStyles, IStackTokens, IStackItemStyles } from '@fluentui/react/lib/Stack';
 import { DefaultPalette } from '@fluentui/react/lib/Styling';
+import * as ROUTES from '../../constants/routes';
+
 const logo = require("../../svlogo.PNG");
+
 // Styles definition
 const stackStyles = {
   root: {
@@ -68,12 +71,12 @@ const HomePage = () => {
 
           </Stack.Item>
           <Stack.Item styles={stackItemStyles}>
-            <Link to="/auth">
+            <Link to={ROUTES.AUTH} >
               <LoginBtn></LoginBtn>
             </Link>
           </Stack.Item>
           <Stack.Item styles={stackItemStyles}>
-            <Link to="/call">
+            <Link to={ROUTES.SIGNUP}>
               <SignupBtn></SignupBtn>
             </Link>
           </Stack.Item>

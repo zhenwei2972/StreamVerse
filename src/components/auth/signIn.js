@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { PrimaryButton, TextField } from '@fluentui/react/lib';
 import axios from 'axios';
 import { BrowserRouter as Router, Link } from "react-router-dom";
+import { useNavigate  } from "react-router-dom";
 /**
  * Renders a button which, when selected, will open a popup for login
  */
@@ -12,9 +13,8 @@ export const SignInButton = props => {
         backgroundColor: '#2766cc',
         color: 'white', marginTop: '1rem', borderRadius: 25, marginLeft: 140
     };
-    const txtStyle = {
+    const navigate = useNavigate ();
 
-    }
     const handleLogin = () => {
         axios.post(process.env.REACT_APP_API_ENDPOINT + '/auth/login', {
             email: email,
@@ -22,6 +22,7 @@ export const SignInButton = props => {
         }).then(function (response) {
             localStorage.setItem("user", JSON.stringify(response.data));
             props.handleAuth();
+            navigate('/start', { replace: true })
         }).catch(function (error) {
             console.log(error);
         });
@@ -39,10 +40,10 @@ export const SignInButton = props => {
                 fieldGroup: {
                     borderRadius: 259,
                 }
-            }}defaultValue ="test" canRevealPassword={true} onChange={e => setPassword(e.target.value)} name="password" label="Password" />
-            <Link to='/start'>
+            }} defaultValue ="" type="password" canRevealPassword={true} onChange={e => setPassword(e.target.value)} name="password" label="Password" />
+            
             <PrimaryButton style={btnStyle} text="Sign in" onClick={handleLogin} />
-            </Link>
+            
         </div>
     );
 }
