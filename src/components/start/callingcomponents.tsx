@@ -131,7 +131,7 @@ export const CallingComponents = (props : any): JSX.Element => {
                 {videoGalleryProps && <VideoGallery {...videoGalleryProps} />}
             </div>
            
-            <DialogBasicExample />
+            
             {/*TBD 3 dot settings floating button with end call button and such, overlaid ontop of video feed at top right corner. */}
 
         </Stack>

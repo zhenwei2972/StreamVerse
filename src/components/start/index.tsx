@@ -1,9 +1,9 @@
+import DialogBasicExample from "./dialog";
 import { registerIcons } from '@fluentui/react';
 import { PrimaryButton } from '@fluentui/react/lib';
 import { CallingComponents } from './callingcomponents';
 import { Call, CallAgent, IncomingCall } from '@azure/communication-calling';
 import {
-  FluentThemeProvider,
   DEFAULT_COMPONENT_ICONS,
   CallClientProvider,
   CallAgentProvider,
@@ -26,6 +26,8 @@ import axios from 'axios';
 import { useNavigate  } from "react-router-dom";
 import { IContextualMenuProps, mergeStyles, Stack } from '@fluentui/react';
 import { CommandBar, ICommandBarItemProps } from '@fluentui/react/lib/CommandBar';
+import { FluentThemeProvider, ControlBarButton } from '@azure/communication-react';
+import { Airplane20Filled, VehicleShip20Filled } from '@fluentui/react-icons';
 function StartPage(): JSX.Element {
   const componentMainDivStyle = {
     display: 'flex',
@@ -54,6 +56,8 @@ function StartPage(): JSX.Element {
   const [call, setCall] = useState<Call>();
   const [threadId, setThreadId] = useState();
   const [groupId, setGroupId] = useState('');
+  const [initSocket, setInitSocket] = useState(false);
+  const [playerturn, setplayerturn] = useState(false);
  
   // token bearer authorization header
   const config = {
@@ -63,10 +67,12 @@ function StartPage(): JSX.Element {
   // handle gamestate
   const [gameState, setGameState] = useState({
     'currentPlayer': user.name,
-    'thisCanBeAnImageId': 1,
+    'ImageId': 1,
+    'state':0,
+    'rounds' :3,
   });
+  
   const [ws, setWs] = useState(new WebSocket(websocketUrl));
-
   // submit gamestate to server and other clients
   // call this method 
   // you can update the game state anywhere else by calling setGameState hooks
@@ -77,8 +83,56 @@ function StartPage(): JSX.Element {
   // called after joining group call to register client at server websocket
   const initGameState = (guid: string) => {
     ws.send(JSON.stringify({ type: "update", groupId: guid, gameState: gameState}));
+    setInitSocket(true);
   }
 
+  //handle game State
+  const StartGame =() =>{
+    setGameState({
+      'currentPlayer': user.name,
+      'ImageId': 1,
+      'state': 1,
+      'rounds':3,
+    });
+  }
+  const updategamestate=(state: number,Image: number,currentplayer:string,rounds:number)=>{
+    setGameState({
+      'currentPlayer': currentplayer,
+      'ImageId': Image,
+      'state': state,
+      'rounds': rounds,
+    });
+  }
+  
+  const randomImage=()=>{
+    const min = 1;
+    const max = 100;
+    const rand = min + Math.random() * (max - min);
+    return Math.round(rand);
+  }
+ 
+  const updateRounds=()=>{
+    var roundleft = gameState.rounds
+    if(roundleft != 0){
+      roundleft = roundleft -1
+      setGameState({
+        'currentPlayer': user.name,
+        'ImageId': randomImage(),
+        'state': gameState.state,
+        'rounds': roundleft,
+      });
+    }
+    else{
+      updategamestate(0,randomImage(),user.name,3);
+    }
+  }
+  const [rounds, roundFunction] = useState(updateRounds);
+  useEffect(()=> {
+    if(user.name == gameState.currentPlayer)
+    setplayerturn(false);
+    else
+    setplayerturn(true);
+  },[gameState.currentPlayer])
   // send and receive gamestate from backend
   useEffect(() => {
     ws.onopen = () => {
@@ -89,10 +143,14 @@ function StartPage(): JSX.Element {
       const gamestate = JSON.parse(e.data);
       // over here can update game state
       // for currentplayer use user.name instead of whatever that gets passed here
-      setGameState({
-        'currentPlayer': user.name,
-        'thisCanBeAnImageId': 1,
-      });
+      if(JSON.stringify(gameState) != e.data){
+        setGameState({
+          'currentPlayer': gamestate.currentPlayer,
+          'ImageId': gamestate.imageId,
+          'state': gamestate.state,
+          'rounds' : gamestate.rounds,
+        });
+    }
       console.log(gamestate);
     }
   
@@ -175,6 +233,12 @@ function StartPage(): JSX.Element {
       });
     }
   }, [callAgent]);
+  
+  useEffect(() => {
+    if (initSocket) {
+      sendGameStateHandler();
+    }
+  },[gameState, initSocket]);
 
   return (
     <>
@@ -189,11 +253,14 @@ function StartPage(): JSX.Element {
                   <ControlBar layout="floatingTop">
                   <EndCallButton onClick={endCallHandler}></EndCallButton>
                   <CameraBtn></CameraBtn>
-                  <DevicesButton onClick={sendGameStateHandler} ></DevicesButton>
+                  <DevicesButton onClick={sendGameStateHandler} />
                   
                     </ControlBar>
                     </Stack>
                    <CallingComponents />
+                   <Stack className={mergeStyles({ height: '100%' })}>
+                   <DialogBasicExample {...gameState} {...updateRounds} />
+                   </Stack>
                  
                   </CallProvider>
                 )}
@@ -202,6 +269,15 @@ function StartPage(): JSX.Element {
           </CallClientProvider>
         )}
       </FluentThemeProvider>
+      {gameState.state == 0?<DevicesButton onClick={StartGame} />: <DevicesButton onClick={StartGame} hidden={true} />}
+      {playerturn?<ControlBarButton
+        key={'btn1'}
+        onRenderIcon={() => <VehicleShip20Filled key={'shipIconKey'} primaryFill="currentColor"  onClick={updateRounds}/>}
+      />:<ControlBarButton
+      key={'btn1'}
+      onRenderIcon={() => <Airplane20Filled key={'airplaneIconKey'} primaryFill="currentColor" onClick={()=>{console.log("not your turn")}}/>}
+    />}
+                  
     </>
   );
 }
