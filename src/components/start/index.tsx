@@ -73,7 +73,6 @@ function StartPage(): JSX.Element {
   });
   
   const [ws, setWs] = useState(new WebSocket(websocketUrl));
-  const updateChildGS = (newGS: React.SetStateAction<{ currentPlayer: any; thisCanBeAnImageId: number; }>) =>{setGameState(newGS)}
   // submit gamestate to server and other clients
   // call this method 
   // you can update the game state anywhere else by calling setGameState hooks
@@ -111,7 +110,7 @@ function StartPage(): JSX.Element {
     const rand = min + Math.random() * (max - min);
     return Math.round(rand);
   }
-  
+ 
   const updateRounds=()=>{
     var roundleft = gameState.rounds
     if(roundleft != 0){
@@ -127,6 +126,7 @@ function StartPage(): JSX.Element {
       updategamestate(0,randomImage(),user.name,3);
     }
   }
+  const [rounds, roundFunction] = useState(updateRounds);
   useEffect(()=> {
     if(user.name == gameState.currentPlayer)
     setplayerturn(false);
@@ -259,7 +259,7 @@ function StartPage(): JSX.Element {
                     </Stack>
                    <CallingComponents />
                    <Stack className={mergeStyles({ height: '100%' })}>
-                   <DialogBasicExample {...gameState } />
+                   <DialogBasicExample {...gameState} {...updateRounds} />
                    </Stack>
                  
                   </CallProvider>
