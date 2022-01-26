@@ -56,6 +56,7 @@ function StartPage(): JSX.Element {
   const [threadId, setThreadId] = useState();
   const [groupId, setGroupId] = useState('');
   const [initSocket, setInitSocket] = useState(false);
+  const [playerturn, setplayerturn] = useState(false);
  
   // token bearer authorization header
   const config = {
@@ -102,6 +103,7 @@ function StartPage(): JSX.Element {
       'rounds': rounds,
     });
   }
+  
   const randomImage=()=>{
     const min = 1;
     const max = 100;
@@ -124,6 +126,12 @@ function StartPage(): JSX.Element {
       updategamestate(0,randomImage(),user.name,3);
     }
   }
+  useEffect(()=> {
+    if(user.name == gameState.currentPlayer)
+    setplayerturn(false);
+    else
+    setplayerturn(true);
+  },[gameState.currentPlayer])
   // send and receive gamestate from backend
   useEffect(() => {
     ws.onopen = () => {
@@ -258,12 +266,12 @@ function StartPage(): JSX.Element {
         )}
       </FluentThemeProvider>
       {gameState.state == 0?<DevicesButton onClick={StartGame} />: <DevicesButton onClick={StartGame} hidden={true} />}
-      {gameState.state != 0?<ControlBarButton
+      {playerturn?<ControlBarButton
         key={'btn1'}
         onRenderIcon={() => <VehicleShip20Filled key={'shipIconKey'} primaryFill="currentColor"  onClick={updateRounds}/>}
       />:<ControlBarButton
       key={'btn1'}
-      onRenderIcon={() => <Airplane20Filled key={'airplaneIconKey'} primaryFill="currentColor" onClick={updateRounds}/>}
+      onRenderIcon={() => <Airplane20Filled key={'airplaneIconKey'} primaryFill="currentColor" onClick={()=>{console.log("not your turn")}}/>}
     />}
                   
     </>
