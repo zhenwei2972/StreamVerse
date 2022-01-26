@@ -39,7 +39,7 @@ export const SignInButton = props => {
                 fieldGroup: {
                     borderRadius: 259,
                 }
-            }}canRevealPassword={false} onChange={e => setPassword(e.target.value)} name="password" label="Password" />
+            }}defaultValue ="test" canRevealPassword={true} onChange={e => setPassword(e.target.value)} name="password" label="Password" />
             <Link to='/start'>
             <PrimaryButton style={btnStyle} text="Sign in" onClick={handleLogin} />
             </Link>
