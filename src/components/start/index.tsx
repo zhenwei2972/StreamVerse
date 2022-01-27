@@ -48,9 +48,7 @@ function StartPage(): JSX.Element {
     return new AzureCommunicationTokenCredential(userAccessToken);
   }, [userAccessToken]);
   const createGroupId = (): GroupLocator => ({ groupId: generateGUID() });
-  
   const displayName = user.name;
-
   const [statefulCallClient, setStatefulCallClient] = useState<StatefulCallClient>();
   const [callAgent, setCallAgent] = useState<CallAgent>();
   const [call, setCall] = useState<Call>();
@@ -58,6 +56,7 @@ function StartPage(): JSX.Element {
   const [groupId, setGroupId] = useState('');
   const [initSocket, setInitSocket] = useState(false);
   const [playerturn, setplayerturn] = useState(false);
+  const [counter, setcounter] = useState(20);
  
   // token bearer authorization header
   const config = {
@@ -79,13 +78,15 @@ function StartPage(): JSX.Element {
   const sendGameStateHandler = () => {
     ws.send(JSON.stringify({ type: "update", groupId: groupId, gameState: gameState}));
   }
+
   const sendTimerHandler = () => {
     ws.send(JSON.stringify({ type: "update", groupId: groupId, counter: counter}));
   }
+
   // called after joining group call to register client at server websocket
   const initGameState = (guid: string) => {
-    ws.send(JSON.stringify({ type: "update", groupId: guid, gameState: gameState}));
-    setInitSocket(true);
+    ws.send(JSON.stringify({ type: "init", groupId: guid }));
+    // setInitSocket(true);
   }
 
   //handle game State
@@ -98,6 +99,7 @@ function StartPage(): JSX.Element {
     });
     timersync();
   }
+
   const updategamestate=(state: number,Image: number,currentplayer:string,rounds:number)=>{
     setGameState({
       'currentPlayer': currentplayer,
@@ -106,12 +108,14 @@ function StartPage(): JSX.Element {
       'rounds': rounds,
     });
   }
+
   const timersync =() =>{
     if(!playerturn)
       setcounter(21);
     else
       setcounter(20);
   }
+
   //random image range
   const randomImage=()=>{
     const min = 1;
@@ -119,6 +123,7 @@ function StartPage(): JSX.Element {
     const rand = min + Math.random() * (max - min);
     return Math.round(rand);
   }
+
  //update round status
   const updateRounds=()=>{
     var roundleft = gameState.rounds
@@ -136,7 +141,7 @@ function StartPage(): JSX.Element {
       updategamestate(0,randomImage(),user.name,3);
     }
   }
-  const [counter,setcounter] = useState(20);
+
   //changing of player
   useEffect(()=> {
     if(user.name == gameState.currentPlayer)
@@ -144,6 +149,7 @@ function StartPage(): JSX.Element {
     else
     setplayerturn(true);
   },[gameState.currentPlayer])
+
   // send and receive gamestate from backend
   useEffect(() => {
     ws.onopen = () => {
@@ -152,16 +158,15 @@ function StartPage(): JSX.Element {
   
     ws.onmessage = (e) => {
       const gamestate = JSON.parse(e.data);
-      // over here can update game state
-      // for currentplayer use user.name instead of whatever that gets passed here
-      if(JSON.stringify(gameState) != e.data){
-        setGameState({
-          'currentPlayer': gamestate.currentPlayer,
-          'ImageId': gamestate.imageId,
-          'state': gamestate.state,
-          'rounds' : gamestate.rounds,
-        });
-    }
+      console.log(gamestate)
+      // if(JSON.stringify(gameState) != e.data){
+      //   setGameState({
+      //     'currentPlayer': gamestate.currentPlayer,
+      //     'ImageId': gamestate.imageId,
+      //     'state': gamestate.state,
+      //     'rounds' : gamestate.rounds,
+      //   });
+      // }
       console.log(gamestate);
     }
   
@@ -182,6 +187,7 @@ function StartPage(): JSX.Element {
     axios.post(process.env.REACT_APP_API_ENDPOINT + '/chat/endChat', {
       threadId: threadId
     }, config).then(response => {
+      if (callAgent !== undefined) callAgent.dispose(); // terminate group calls
       navigate('/', { replace: true })
     }).catch(function (error) {
       console.log(error);
@@ -244,12 +250,13 @@ function StartPage(): JSX.Element {
       });
     }
   }, [callAgent]);
+
   // send updated gamestate to other user
-  useEffect(() => {
-    if (initSocket) {
-      sendGameStateHandler();
-    }
-  },[gameState, initSocket]);
+  // useEffect(() => {
+  //   if (initSocket) {
+  //     sendGameStateHandler();
+  //   }
+  // },[gameState, initSocket]);
 
   //timer count down
   useEffect(() => {
