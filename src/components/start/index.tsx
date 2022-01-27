@@ -79,7 +79,9 @@ function StartPage(): JSX.Element {
   const sendGameStateHandler = () => {
     ws.send(JSON.stringify({ type: "update", groupId: groupId, gameState: gameState}));
   }
-
+  const sendTimerHandler = () => {
+    ws.send(JSON.stringify({ type: "update", groupId: groupId, counter: counter}));
+  }
   // called after joining group call to register client at server websocket
   const initGameState = (guid: string) => {
     ws.send(JSON.stringify({ type: "update", groupId: guid, gameState: gameState}));
@@ -94,7 +96,7 @@ function StartPage(): JSX.Element {
       'state': 1,
       'rounds':3,
     });
-    console.log(gameState);
+    timersync();
   }
   const updategamestate=(state: number,Image: number,currentplayer:string,rounds:number)=>{
     setGameState({
@@ -104,14 +106,20 @@ function StartPage(): JSX.Element {
       'rounds': rounds,
     });
   }
-  
+  const timersync =() =>{
+    if(!playerturn)
+      setcounter(21);
+    else
+      setcounter(20);
+  }
+  //random image range
   const randomImage=()=>{
     const min = 1;
     const max = 100;
     const rand = min + Math.random() * (max - min);
     return Math.round(rand);
   }
- 
+ //update round status
   const updateRounds=()=>{
     var roundleft = gameState.rounds
     if(roundleft != 0){
@@ -122,11 +130,14 @@ function StartPage(): JSX.Element {
         'state': gameState.state,
         'rounds': roundleft,
       });
+      timersync();
     }
     else{
       updategamestate(0,randomImage(),user.name,3);
     }
   }
+  const [counter,setcounter] = useState(20);
+  //changing of player
   useEffect(()=> {
     if(user.name == gameState.currentPlayer)
     setplayerturn(false);
@@ -233,13 +244,27 @@ function StartPage(): JSX.Element {
       });
     }
   }, [callAgent]);
-  
+  // send updated gamestate to other user
   useEffect(() => {
     if (initSocket) {
       sendGameStateHandler();
     }
   },[gameState, initSocket]);
-  
+
+  //timer count down
+  useEffect(() => {
+    if(gameState.state == 1){
+      counter > 0 && setTimeout(() => setcounter(counter - 1), 1000);
+      if(counter <= 0){
+        if(user.name != gameState.currentPlayer)
+          updateRounds();
+        else
+        timersync();
+      }
+    }
+    console.log("timer: " +counter);
+  }, [counter,gameState.state]);
+
   return (
     <>
       <FluentThemeProvider>
