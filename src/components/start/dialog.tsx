@@ -33,19 +33,29 @@ export interface GameState {
   // These are set based on the toggles shown above the examples (not needed in real code)
   currentPlayer?: string;
   ImageId?: number;
+  state: number; rounds: number;
+  
+
   // checked?: boolean;
   // websocket?: WebSocket;
 }
+interface Props {
+  currentPlayer: string;
+  imageId: number;
+  state: number;
+  rounds: number;
+  updateRounds(): void;
+  }
 
 
-
-export const ButtonDefaultExample: React.FunctionComponent<GameState> = props => {
-  const { currentPlayer, ImageId } = props;
-  function _alertClicked(ImageID:number): void {
+export const ButtonDefaultExample: React.FunctionComponent<Props> = props => {
+  const { currentPlayer, imageId } = props;
+  
+  function _alertClicked(imageId:number): void {
     //send the image prop over 
-    alert('Clicked on' + ImageID);
-    
-    if(ImageID===ImageId)
+    alert('Clicked on' + imageId);
+    props.updateRounds()
+    if(imageId===imageId)
     {
       console.log("You are right!")
     }
@@ -100,8 +110,8 @@ export const ButtonDefaultExample: React.FunctionComponent<GameState> = props =>
 
   );
 };
-export const DialogBasicExample: React.FunctionComponent<GameState> = props => {
-  const { currentPlayer, ImageId } = props;
+export const DialogBasicExample: React.FunctionComponent<Props> = props => {
+  const { currentPlayer, imageId } = props;
   const [hideDialog, { toggle: toggleHideDialog }] = useBoolean(true);
   const [isDraggable, { toggle: toggleIsDraggable }] = useBoolean(true);
   const labelId: string = useId('dialogLabel');
@@ -111,7 +121,7 @@ export const DialogBasicExample: React.FunctionComponent<GameState> = props => {
     evt.preventDefault();
     alert(`Fetch question ${question}`)
   }
-  { console.log(ImageId) }
+  { console.log(imageId) }
 
   const modalProps = React.useMemo(
     () => ({
