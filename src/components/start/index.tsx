@@ -17,7 +17,7 @@ import {
   DevicesButton,
 } from '@azure/communication-react';
 import { AzureCommunicationTokenCredential } from '@azure/communication-common';
-import { v1 as generateGUID } from 'uuid';
+import { stringify, v1 as generateGUID } from 'uuid';
 import { EndCallBtn } from './callingcomponents';
 import { CameraBtn } from './callingcomponents';
 import { GroupLocator } from '@azure/communication-calling';
@@ -94,6 +94,7 @@ function StartPage(): JSX.Element {
       'state': 1,
       'rounds':3,
     });
+    console.log(gameState);
   }
   const updategamestate=(state: number,Image: number,currentplayer:string,rounds:number)=>{
     setGameState({
@@ -126,7 +127,6 @@ function StartPage(): JSX.Element {
       updategamestate(0,randomImage(),user.name,3);
     }
   }
-  const [rounds, roundFunction] = useState(updateRounds);
   useEffect(()=> {
     if(user.name == gameState.currentPlayer)
     setplayerturn(false);
@@ -239,7 +239,7 @@ function StartPage(): JSX.Element {
       sendGameStateHandler();
     }
   },[gameState, initSocket]);
-
+  
   return (
     <>
       <FluentThemeProvider>
@@ -259,7 +259,7 @@ function StartPage(): JSX.Element {
                     </Stack>
                    <CallingComponents />
                    <Stack className={mergeStyles({ height: '100%' })}>
-                   <DialogBasicExample {...gameState} {...updateRounds} />
+                   <DialogBasicExample currentPlayer={gameState.currentPlayer} imageId={gameState.ImageId} state={gameState.state} rounds={gameState.rounds} updateRounds={updateRounds}  />
                    </Stack>
                  
                   </CallProvider>
