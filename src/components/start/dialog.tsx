@@ -59,13 +59,13 @@ interface Props {
 export const ButtonDefaultExample: React.FunctionComponent<PropsWithToggle> = props => {
   const { currentPlayer, imageId } = props;
   
-  function _alertClicked(imageId:number): void {
+  function _alertClicked(_imageId:number): void {
     //send the image prop over 
-    alert('Clicked on' + imageId);
+    
     props.updateRounds()
-    if(imageId===imageId)
+    if(imageId===_imageId)
     {
-      console.log("You are right!")
+      alert('You are Right!');
     }
     else{
       console.log("You are wrong!")
@@ -75,38 +75,72 @@ export const ButtonDefaultExample: React.FunctionComponent<PropsWithToggle> = pr
   const allImages = [
     {
       number: 1,
-      image: "img"
+      image: "1"
     },
     {
       number: 2,
-      image: "img"
+      image: "2"
     },
     {
       number: 3,
-      image: "img"
+      image: "3"
     },
     {
       number: 4,
-      image: "img"
+      image: "4"
     },
     {
       number: 5,
-      image: "img"
+      image: "5"
     },
     {
       number: 6,
-      image: "img"
+      image: "6"
+    },
+    {
+      number: 7,
+      image: "7"
+    },
+    {
+      number: 8,
+      image: "8"
+    },
+    {
+      number: 9,
+      image: "9"
+    },
+    {
+      number: 10,
+      image: "10"
+    },
+    {
+      number: 11,
+      image: "11"
+    },
+    {
+      number: 12,
+      image: "12"
     },
   ]
   const [startIndex, setStart ] = useState();
-  let subset = allImages.slice(0, 4)
+  let num:number =imageId;
+  if(imageId>=9)
+  {
+    num =0;
+  }
+  else
+  {
+    num = imageId;
+  }
+  let subset = allImages.slice(num, 4)
+  
   
   return (
     <>
       {subset.map((item, index) => (
         <button key={index} >
           <img
-            src={require('../../' +
+            src={require('../../NaturePictures/' +
               item.image +
               '.png')}
             className="img-fluid"
@@ -146,13 +180,13 @@ export const DialogBasicExample: React.FunctionComponent<Props> = props => {
 
   return (
     <>
-      <p>{currentPlayer}</p>
-      <DefaultButton style ={{ zIndex: '999'}}secondaryText="Open sesame" onClick={toggleHideDialog} text="start game" />
+      <p style={{fontSize:"20px"}}>{"Turn: "+currentPlayer}</p>
+      <PrimaryButton style ={{ zIndex: '999'}}secondaryText="click me to start the game!" onClick={toggleHideDialog} text="Start Game" />
       <label id={labelId} className={screenReaderOnly}>
-        My sample label
+       start
       </label>
       <label id={subTextId} className={screenReaderOnly}>
-        My sample description
+        startBtn
       </label>
 
       <Dialog

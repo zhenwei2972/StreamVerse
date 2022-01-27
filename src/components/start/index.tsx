@@ -56,7 +56,6 @@ function StartPage(): JSX.Element {
   const [groupId, setGroupId] = useState('');
   const [initSocket, setInitSocket] = useState(false);
   const [playerturn, setplayerturn] = useState(false);
-  const [counter,setcounter] = useState(20);
   const [Updatedstates,setUpdatedstates] = useState(true);
  
   // token bearer authorization header
@@ -95,7 +94,6 @@ function StartPage(): JSX.Element {
     });
     console.log("init start game");
     setUpdatedstates(false);
-    timersync();
   }
 
   const updategamestate=(state: number,Image: number,currentplayer:string,rounds:number)=>{
@@ -105,13 +103,6 @@ function StartPage(): JSX.Element {
       'state': state,
       'rounds': rounds,
     });
-  }
-
-  const timersync =() =>{
-    if(!playerturn)
-      setcounter(21);
-    else
-      setcounter(20);
   }
 
   //random image range
@@ -135,7 +126,6 @@ function StartPage(): JSX.Element {
       });
       console.log("updating game");
       setUpdatedstates(false);
-      timersync();
     }
     else{
       console.log("ending game");
@@ -265,20 +255,7 @@ function StartPage(): JSX.Element {
   },[Updatedstates]);
 
   //timer count down
-  useEffect(() => {
-    if(gameState.state == 1){
-      counter > 0 && setTimeout(() => setcounter(counter - 1), 1000);
-      if(counter <= 0){
-        if(user.name != gameState.currentPlayer ){
-            console.log(user.name + "calling update rounds");
-            updateRounds();
-        }
-        else
-          timersync();
-      }
-    }
-    console.log("timer: " +counter);
-  }, [counter,gameState.state]);
+
 
   return (
     <>
@@ -295,7 +272,7 @@ function StartPage(): JSX.Element {
                    
                    
                    </Stack>
-                   <Stack className={mergeStyles({ height: '80' , width:'100%',justifyContent: 'center',alignItems:'center',position:'absolute',bottom:0})}>
+                   <Stack className={mergeStyles({ height: '100' , width:'100%',justifyContent: 'center',alignItems:'center',position:'absolute',bottom:80})}>
                   <ControlBar layout="floatingTop" >
                   <EndCallButton onClick={endCallHandler}></EndCallButton>
                   <CameraBtn></CameraBtn>
@@ -310,15 +287,9 @@ function StartPage(): JSX.Element {
           </CallClientProvider>
         )}
       </FluentThemeProvider>
-      <Stack className={mergeStyles({ height: '100' , width:'100%',justifyContent: 'center',alignItems:'center',position:'absolute',bottom:0})}>
+      <Stack className={mergeStyles({ height: '50' , width:'100%',justifyContent: 'center',alignItems:'center',position:'absolute',bottom:69})}>
       {gameState.state == 0?<DevicesButton style ={{ zIndex: '999'}} onClick={StartGame} />: <DialogBasicExample  currentPlayer={gameState.currentPlayer} imageId={gameState.ImageId} state={gameState.state} rounds={gameState.rounds} updateRounds={updateRounds}  />}
-      {/* {playerturn?<ControlBarButton
-        key={'btn1'}
-        onRenderIcon={() => <VehicleShip20Filled key={'shipIconKey'} primaryFill="currentColor"  onClick={updateRounds}/>}
-      />:<ControlBarButton
-      key={'btn1'}
-      onRenderIcon={() => <Airplane20Filled key={'airplaneIconKey'} primaryFill="currentColor" onClick={()=>{console.log("not your turn")}}/>}
-    />} */}
+  
       </Stack>
                   
     </>
