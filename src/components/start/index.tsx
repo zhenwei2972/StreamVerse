@@ -249,19 +249,19 @@ function StartPage(): JSX.Element {
               <CallAgentProvider callAgent={callAgent}>
                 {call && (
                   <CallProvider call={call}>
-                      <Stack className={mergeStyles({ height: '100%' })}>
-                  <ControlBar layout="floatingTop">
+                      
+                   <CallingComponents />
+                   <Stack className={mergeStyles({ height: '100%' })}>
+                   <DialogBasicExample currentPlayer={gameState.currentPlayer} imageId={gameState.ImageId} state={gameState.state} rounds={gameState.rounds} updateRounds={updateRounds}  />
+                   </Stack>
+                   <Stack className={mergeStyles({ height: '80' , width:'100%',justifyContent: 'center',alignItems:'center',position:'absolute',bottom:0})}>
+                  <ControlBar layout="floatingTop" >
                   <EndCallButton onClick={endCallHandler}></EndCallButton>
                   <CameraBtn></CameraBtn>
                   <DevicesButton onClick={sendGameStateHandler} />
                   
                     </ControlBar>
                     </Stack>
-                   <CallingComponents />
-                   <Stack className={mergeStyles({ height: '100%' })}>
-                   <DialogBasicExample currentPlayer={gameState.currentPlayer} imageId={gameState.ImageId} state={gameState.state} rounds={gameState.rounds} updateRounds={updateRounds}  />
-                   </Stack>
-                 
                   </CallProvider>
                 )}
               </CallAgentProvider>
@@ -269,6 +269,7 @@ function StartPage(): JSX.Element {
           </CallClientProvider>
         )}
       </FluentThemeProvider>
+      <Stack className={mergeStyles({ height: '80' , width:'100%',justifyContent: 'center',alignItems:'center',position:'absolute',bottom:0})}>
       {gameState.state == 0?<DevicesButton onClick={StartGame} />: <DevicesButton onClick={StartGame} hidden={true} />}
       {playerturn?<ControlBarButton
         key={'btn1'}
@@ -277,6 +278,7 @@ function StartPage(): JSX.Element {
       key={'btn1'}
       onRenderIcon={() => <Airplane20Filled key={'airplaneIconKey'} primaryFill="currentColor" onClick={()=>{console.log("not your turn")}}/>}
     />}
+      </Stack>
                   
     </>
   );
