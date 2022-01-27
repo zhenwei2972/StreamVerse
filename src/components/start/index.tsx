@@ -56,7 +56,8 @@ function StartPage(): JSX.Element {
   const [groupId, setGroupId] = useState('');
   const [initSocket, setInitSocket] = useState(false);
   const [playerturn, setplayerturn] = useState(false);
-  const [counter, setcounter] = useState(20);
+  const [counter,setcounter] = useState(20);
+  const [Updatedstates,setUpdatedstates] = useState(true);
  
   // token bearer authorization header
   const config = {
@@ -78,11 +79,6 @@ function StartPage(): JSX.Element {
   const sendGameStateHandler = () => {
     ws.send(JSON.stringify({ type: "update", groupId: groupId, gameState: gameState}));
   }
-
-  const sendTimerHandler = () => {
-    ws.send(JSON.stringify({ type: "update", groupId: groupId, counter: counter}));
-  }
-
   // called after joining group call to register client at server websocket
   const initGameState = (guid: string) => {
     ws.send(JSON.stringify({ type: "init", groupId: guid }));
@@ -97,6 +93,8 @@ function StartPage(): JSX.Element {
       'state': 1,
       'rounds':3,
     });
+    console.log("init start game");
+    setUpdatedstates(false);
     timersync();
   }
 
@@ -127,7 +125,7 @@ function StartPage(): JSX.Element {
  //update round status
   const updateRounds=()=>{
     var roundleft = gameState.rounds
-    if(roundleft != 0){
+    if(roundleft > 0){
       roundleft = roundleft -1
       setGameState({
         'currentPlayer': user.name,
@@ -135,10 +133,14 @@ function StartPage(): JSX.Element {
         'state': gameState.state,
         'rounds': roundleft,
       });
+      console.log("updating game");
+      setUpdatedstates(false);
       timersync();
     }
     else{
+      console.log("ending game");
       updategamestate(0,randomImage(),user.name,3);
+      setUpdatedstates(false);
     }
   }
 
@@ -158,16 +160,19 @@ function StartPage(): JSX.Element {
   
     ws.onmessage = (e) => {
       const gamestate = JSON.parse(e.data);
-      console.log(gamestate)
-      // if(JSON.stringify(gameState) != e.data){
-      //   setGameState({
-      //     'currentPlayer': gamestate.currentPlayer,
-      //     'ImageId': gamestate.imageId,
-      //     'state': gamestate.state,
-      //     'rounds' : gamestate.rounds,
-      //   });
-      // }
-      console.log(gamestate);
+      // over here can update game state
+      // for currentplayer use user.name instead of whatever that gets passed here
+      if(JSON.stringify(gameState) != e.data){
+        setGameState({
+          'currentPlayer': gamestate.currentPlayer,
+          'ImageId': gamestate.imageId,
+          'state': gamestate.state,
+          'rounds' : gamestate.rounds,
+        });
+        setUpdatedstates(true);
+        console.log("updating gamestate");
+        console.log(gamestate);
+    }
     }
   
     return () => {
@@ -252,21 +257,24 @@ function StartPage(): JSX.Element {
   }, [callAgent]);
 
   // send updated gamestate to other user
-  // useEffect(() => {
-  //   if (initSocket) {
-  //     sendGameStateHandler();
-  //   }
-  // },[gameState, initSocket]);
+  useEffect(() => {
+    if(!Updatedstates){
+      sendGameStateHandler();
+      console.log("send");
+    }
+  },[Updatedstates]);
 
   //timer count down
   useEffect(() => {
     if(gameState.state == 1){
       counter > 0 && setTimeout(() => setcounter(counter - 1), 1000);
       if(counter <= 0){
-        if(user.name != gameState.currentPlayer)
-          updateRounds();
+        if(user.name != gameState.currentPlayer ){
+            console.log(user.name + "calling update rounds");
+            updateRounds();
+        }
         else
-        timersync();
+          timersync();
       }
     }
     console.log("timer: " +counter);
@@ -281,19 +289,20 @@ function StartPage(): JSX.Element {
               <CallAgentProvider callAgent={callAgent}>
                 {call && (
                   <CallProvider call={call}>
-                      <Stack className={mergeStyles({ height: '100%' })}>
-                  <ControlBar layout="floatingTop">
+                      
+                   <CallingComponents />
+                   <Stack className={mergeStyles({ height: '100%' })}>
+                   
+                   
+                   </Stack>
+                   <Stack className={mergeStyles({ height: '80' , width:'100%',justifyContent: 'center',alignItems:'center',position:'absolute',bottom:0})}>
+                  <ControlBar layout="floatingTop" >
                   <EndCallButton onClick={endCallHandler}></EndCallButton>
                   <CameraBtn></CameraBtn>
-                  <DevicesButton onClick={sendGameStateHandler} />
+                
                   
                     </ControlBar>
                     </Stack>
-                   <CallingComponents />
-                   <Stack className={mergeStyles({ height: '100%' })}>
-                   <DialogBasicExample currentPlayer={gameState.currentPlayer} imageId={gameState.ImageId} state={gameState.state} rounds={gameState.rounds} updateRounds={updateRounds}  />
-                   </Stack>
-                 
                   </CallProvider>
                 )}
               </CallAgentProvider>
@@ -301,14 +310,16 @@ function StartPage(): JSX.Element {
           </CallClientProvider>
         )}
       </FluentThemeProvider>
-      {gameState.state == 0?<DevicesButton onClick={StartGame} />: <DevicesButton onClick={StartGame} hidden={true} />}
-      {playerturn?<ControlBarButton
+      <Stack className={mergeStyles({ height: '100' , width:'100%',justifyContent: 'center',alignItems:'center',position:'absolute',bottom:0})}>
+      {gameState.state == 0?<DevicesButton style ={{ zIndex: '999'}} onClick={StartGame} />: <DialogBasicExample  currentPlayer={gameState.currentPlayer} imageId={gameState.ImageId} state={gameState.state} rounds={gameState.rounds} updateRounds={updateRounds}  />}
+      {/* {playerturn?<ControlBarButton
         key={'btn1'}
         onRenderIcon={() => <VehicleShip20Filled key={'shipIconKey'} primaryFill="currentColor"  onClick={updateRounds}/>}
       />:<ControlBarButton
       key={'btn1'}
       onRenderIcon={() => <Airplane20Filled key={'airplaneIconKey'} primaryFill="currentColor" onClick={()=>{console.log("not your turn")}}/>}
-    />}
+    />} */}
+      </Stack>
                   
     </>
   );

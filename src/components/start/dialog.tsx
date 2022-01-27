@@ -21,7 +21,6 @@ const dragOptions = {
 const screenReaderOnly = mergeStyles(hiddenContentStyle);
 const dialogContentProps = {
   type: DialogType.normal,
-  title: 'Pick the right image! Speak only chinese',
   closeButtonAriaLabel: 'Close',
   //subText: 'Do you want to send this message without a subject?',
 };
@@ -47,8 +46,17 @@ interface Props {
   updateRounds(): void;
   }
 
+  interface PropsWithToggle {
+    currentPlayer: string;
+    imageId: number;
+    state: number;
+    rounds: number;
+    updateRounds(): void;
+    toggleHideDialog(): void;
+    }
 
-export const ButtonDefaultExample: React.FunctionComponent<Props> = props => {
+
+export const ButtonDefaultExample: React.FunctionComponent<PropsWithToggle> = props => {
   const { currentPlayer, imageId } = props;
   
   function _alertClicked(imageId:number): void {
@@ -62,6 +70,7 @@ export const ButtonDefaultExample: React.FunctionComponent<Props> = props => {
     else{
       console.log("You are wrong!")
     }
+    props.toggleHideDialog();
   }
   const allImages = [
     {
@@ -128,6 +137,7 @@ export const DialogBasicExample: React.FunctionComponent<Props> = props => {
       titleAriaId: labelId,
       subtitleAriaId: subTextId,
       isBlocking: false,
+      isDarkOverlay: false,
       styles: dialogStyles,
       dragOptions: isDraggable ? dragOptions : undefined,
     }),
@@ -137,7 +147,7 @@ export const DialogBasicExample: React.FunctionComponent<Props> = props => {
   return (
     <>
       <p>{currentPlayer}</p>
-      <DefaultButton secondaryText="Open sesame" onClick={toggleHideDialog} text="start game" />
+      <DefaultButton style ={{ zIndex: '999'}}secondaryText="Open sesame" onClick={toggleHideDialog} text="start game" />
       <label id={labelId} className={screenReaderOnly}>
         My sample label
       </label>
@@ -152,7 +162,7 @@ export const DialogBasicExample: React.FunctionComponent<Props> = props => {
         modalProps={modalProps}
       >
         <DialogFooter>
-          <ButtonDefaultExample {...props}/>
+          <ButtonDefaultExample currentPlayer={props.currentPlayer} imageId={props.imageId} state={props.state} rounds={props.rounds} updateRounds={props.updateRounds} toggleHideDialog={toggleHideDialog}/>
         </DialogFooter>
       </Dialog>
     </>

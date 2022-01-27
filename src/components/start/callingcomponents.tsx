@@ -127,8 +127,8 @@ export const CallingComponents = (props : any): JSX.Element => {
           
             </ControlBar>
           
-            <div style={{ width: '25rem', height: '35rem' }}>
-                {videoGalleryProps && <VideoGallery {...videoGalleryProps} />}
+            <div style={{  width: '100%', height: '100%', position:"absolute", }}>
+                {videoGalleryProps && <VideoGallery styles={{ root: { border: 'solid 3px red' }  } } {...videoGalleryProps}   />}
             </div>
            
             
