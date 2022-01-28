@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { PrimaryButton, TextField } from '@fluentui/react/lib';
+import { PrimaryButton, TextField, DefaultButton } from '@fluentui/react/lib';
 import axios from 'axios';
 import { BrowserRouter as Router, Link } from "react-router-dom";
 import { SignOutButton } from "./signOut";
@@ -17,6 +17,9 @@ export const SignUpButton = props => {
         backgroundColor: '#2766cc',
         color: 'white', marginTop: '1rem', borderRadius: 25, marginLeft: 140
     };
+    const defaultBtnStyle = {
+        marginTop: '1rem', borderRadius: 25, marginLeft: 140
+    };
     const navigate = useNavigate ();
     
     const handleLogin = () => {
@@ -32,7 +35,12 @@ export const SignUpButton = props => {
             navigate('/start', { replace: true })
         }).catch(function (error) {
             console.log(error);
+            alert('Error signing up. Please try again later.');
         });
+    }
+
+    const redirectToLogin = () => {
+        navigate('/auth', { replace: true })
     }
 
     return (
@@ -63,6 +71,7 @@ export const SignUpButton = props => {
                 }
             }} onChange={e => setNationality(e.target.value)} name="nationality" label="Nationality" />
             <PrimaryButton style={btnStyle} text="Sign Up" onClick={handleLogin} />
+            <DefaultButton style={defaultBtnStyle} text="Sign In" onClick={redirectToLogin} />
         </div>
     );
 }

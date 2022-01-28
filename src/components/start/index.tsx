@@ -172,7 +172,7 @@ function StartPage(): JSX.Element {
         setUpdatedstates(true);
         console.log("updating gamestate");
         console.log(gamestate);
-    }
+      }
     }
   
     return () => {
@@ -193,7 +193,7 @@ function StartPage(): JSX.Element {
       threadId: threadId
     }, config).then(response => {
       if (callAgent !== undefined) callAgent.dispose(); // terminate group calls
-      navigate('/', { replace: true })
+      navigate('/auth', { replace: true })
     }).catch(function (error) {
       console.log(error);
     });
@@ -258,10 +258,10 @@ function StartPage(): JSX.Element {
 
   // send updated gamestate to other user
   useEffect(() => {
-    if(!Updatedstates){
-      sendGameStateHandler();
-      console.log("send");
-    }
+      if(!Updatedstates){
+        sendGameStateHandler();
+        console.log("send");
+      }
   },[Updatedstates]);
 
   //timer count down
@@ -270,8 +270,8 @@ function StartPage(): JSX.Element {
       counter > 0 && setTimeout(() => setcounter(counter - 1), 1000);
       if(counter <= 0){
         if(user.name != gameState.currentPlayer ){
-            console.log(user.name + "calling update rounds");
-            updateRounds();
+          console.log(user.name + "calling update rounds");
+          updateRounds();
         }
         else
           timersync();

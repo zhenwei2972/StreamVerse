@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-
+import { PrimaryButton } from '@fluentui/react/lib';
 import { SignInButton } from "./signIn";
 import { SignOutButton } from "./signOut";
 const logo = require("../../svlogo.PNG");
@@ -20,18 +20,18 @@ const AuthPage = () => {
     }, [isAuthenticated])
 
     return (
-            <><img src={logo} style={{
-                width: 180,
-                height: 180,
-                alignContent: "center",
-                display: 'flex',
-                justifyContent: 'center',
-                marginLeft: 100,
-                marginTop:130,
-            }} />
-            <div>
-                {isAuthenticated ? <SignOutButton handleAuth={handleAuth} /> : <SignInButton handleAuth={handleAuth} />}
-            </div></>
+        <><img src={logo} style={{
+            width: 180,
+            height: 180,
+            alignContent: "center",
+            display: 'flex',
+            justifyContent: 'center',
+            marginLeft: 100,
+            marginTop:130,
+        }} />
+        <div>
+            {isAuthenticated ? <SignOutButton handleAuth={handleAuth} /> : <SignInButton handleAuth={handleAuth} />}
+        </div></>
     )
 }
 
