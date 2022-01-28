@@ -10,8 +10,19 @@ import { Stack, IStackTokens } from '@fluentui/react';
 import axios from 'axios';
 import { ChoiceGroup, IChoiceGroupOption } from '@fluentui/react/lib/ChoiceGroup';
 const img = require("../../img.png");
+const bgm = require('../../Frame.png')
+const block ={
+  width: "130px",
+  height: "100px",
+  padding: "0px;",
+  display: "inline-block",
 
-const dialogStyles = { main: { maxWidth: 450 } };
+}
+const whiteClass ={
+  background:"white"
+}
+
+const dialogStyles = { main: { maxWidth: 200}  };
 const dragOptions = {
   moveMenuItemText: 'Move',
   closeMenuItemText: 'Close',
@@ -22,6 +33,7 @@ const screenReaderOnly = mergeStyles(hiddenContentStyle);
 const dialogContentProps = {
   type: DialogType.normal,
   closeButtonAriaLabel: 'Close',
+
   //subText: 'Do you want to send this message without a subject?',
 };
 
@@ -44,6 +56,7 @@ interface Props {
   state: number;
   rounds: number;
   updateRounds(): void;
+  playerturn: boolean;
   }
 
   interface PropsWithToggle {
@@ -52,6 +65,7 @@ interface Props {
     state: number;
     rounds: number;
     updateRounds(): void;
+    playerturn: boolean;
     toggleHideDialog(): void;
     }
 
@@ -61,8 +75,9 @@ export const ButtonDefaultExample: React.FunctionComponent<PropsWithToggle> = pr
   
   function _alertClicked(_imageId:number): void {
     //send the image prop over 
+   
     
-    props.updateRounds()
+    
     if(imageId===_imageId)
     {
       alert('You are Right!');
@@ -70,7 +85,11 @@ export const ButtonDefaultExample: React.FunctionComponent<PropsWithToggle> = pr
     else{
       console.log("You are wrong!")
     }
+   
     props.toggleHideDialog();
+    setTimeout(() => {     props.updateRounds(); }, 500);
+ 
+   
   }
   const allImages = [
     {
@@ -132,25 +151,59 @@ export const ButtonDefaultExample: React.FunctionComponent<PropsWithToggle> = pr
   {
     num = imageId;
   }
-  let subset = allImages.slice(num, 4)
+  let subset = allImages.slice(num, num+4)
   
+
+
   
   return (
     <>
-      {subset.map((item, index) => (
-        <button key={index} >
+ 
+      {props.playerturn? props.toggleHideDialog() : console.log('not my turn')}
+      {
+        
+        props.playerturn?
+        
+      <Stack grow ={true}>
+      <PrimaryButton >
           <img
             src={require('../../NaturePictures/' +
-              item.image +
+              imageId +
               '.png')}
             className="img-fluid"
-            onClick={()=>_alertClicked(item.number)}
+            onClick={()=>_alertClicked(imageId)}
           />
 
-        </button>
-      ))}
-    </>
+        </PrimaryButton>
+        </Stack>
+        :
+        
+        
+        <div style={{textAlign:"center",width:"100%",height:"100%",margin:0,  background:"white", border:"black"}}>
+          {
+          
+          subset.map((item, index) => (
+            <div style={block}>
+            <button style={{  background:"white", border:"white", paddingTop:"20px"}} key={index} >
+             
+              <img style={{height:"100%", width:"100%"}}
+                src={require('../../NaturePictures/' +
+                  item.image +
+                  '.png')}
+                className="img-fluid"
+                onClick={()=>_alertClicked(item.number)}
+              />
+    
+            </button >
+            </div>
+          ))
+          }
+          </div>
+          
 
+    }
+    </>
+      
   );
 };
 export const DialogBasicExample: React.FunctionComponent<Props> = props => {
@@ -196,7 +249,7 @@ export const DialogBasicExample: React.FunctionComponent<Props> = props => {
         modalProps={modalProps}
       >
         <DialogFooter>
-          <ButtonDefaultExample currentPlayer={props.currentPlayer} imageId={props.imageId} state={props.state} rounds={props.rounds} updateRounds={props.updateRounds} toggleHideDialog={toggleHideDialog}/>
+          <ButtonDefaultExample currentPlayer={props.currentPlayer} imageId={props.imageId} state={props.state} rounds={props.rounds} updateRounds={props.updateRounds} playerturn ={props.playerturn} toggleHideDialog={toggleHideDialog}/>
         </DialogFooter>
       </Dialog>
     </>

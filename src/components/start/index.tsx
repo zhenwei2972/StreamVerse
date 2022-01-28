@@ -3,6 +3,7 @@ import { registerIcons } from '@fluentui/react';
 import { PrimaryButton } from '@fluentui/react/lib';
 import { CallingComponents } from './callingcomponents';
 import { Call, CallAgent, IncomingCall } from '@azure/communication-calling';
+
 import {
   DEFAULT_COMPONENT_ICONS,
   CallClientProvider,
@@ -108,13 +109,14 @@ function StartPage(): JSX.Element {
   //random image range
   const randomImage=()=>{
     const min = 1;
-    const max = 100;
+    const max = 9;
     const rand = min + Math.random() * (max - min);
     return Math.round(rand);
   }
 
  //update round status
   const updateRounds=()=>{
+ 
     var roundleft = gameState.rounds
     if(roundleft > 0){
       roundleft = roundleft -1
@@ -288,8 +290,8 @@ function StartPage(): JSX.Element {
         )}
       </FluentThemeProvider>
       <Stack className={mergeStyles({ height: '50' , width:'100%',justifyContent: 'center',alignItems:'center',position:'absolute',bottom:69})}>
-      {gameState.state == 0?<DevicesButton style ={{ zIndex: '999'}} onClick={StartGame} />: <DialogBasicExample  currentPlayer={gameState.currentPlayer} imageId={gameState.ImageId} state={gameState.state} rounds={gameState.rounds} updateRounds={updateRounds}  />}
-  
+      {gameState.state == 0?<DevicesButton style ={{ zIndex: '999'}} onClick={StartGame} />: <DialogBasicExample  currentPlayer={gameState.currentPlayer} imageId={gameState.ImageId} state={gameState.state} rounds={gameState.rounds} updateRounds={updateRounds} playerturn={playerturn} />}
+
       </Stack>
                   
     </>
