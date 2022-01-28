@@ -18,7 +18,7 @@ import {
   DevicesButton,
 } from '@azure/communication-react';
 import { AzureCommunicationTokenCredential } from '@azure/communication-common';
-import { stringify, v1 as generateGUID } from 'uuid';
+import { v1 as generateGUID } from 'uuid';
 import { EndCallBtn } from './callingcomponents';
 import { CameraBtn } from './callingcomponents';
 import { GroupLocator } from '@azure/communication-calling';
@@ -80,6 +80,9 @@ function StartPage(): JSX.Element {
   const sendGameStateHandler = () => {
     ws.send(JSON.stringify({ type: "update", groupId: groupId, gameState: gameState}));
   }
+  const updateOpponentGameState = (gs: any) => {
+    ws.send(JSON.stringify({ type: "update", groupId: groupId, gameState: gs}));
+  }
   // called after joining group call to register client at server websocket
   const initGameState = (guid: string) => {
     ws.send(JSON.stringify({ type: "init", groupId: guid }));
@@ -96,9 +99,10 @@ function StartPage(): JSX.Element {
       'dialogFlag':true
     }
     console.log("init start game");
-    setGameState(gameState =>({...gameState ,...newGameState}));
+    setGameState(gameState => ({...gameState ,...newGameState}));
     console.log(gameState);
-    sendGameStateHandler();
+    // sendGameStateHandler();
+    updateOpponentGameState(newGameState);
     setUpdatedstates(false);
   }
 
@@ -113,7 +117,7 @@ function StartPage(): JSX.Element {
   }
 
   //random image range
-  const randomImage=()=>{
+  const randomImage = () => {
     const min = 1;
     const max = 9;
     const rand = min + Math.random() * (max - min);
@@ -121,12 +125,11 @@ function StartPage(): JSX.Element {
   }
 
  //update round status
-  const updateRounds=()=>{
+  const updateRounds = () => {
     //haeck to send game stat 
-    
     var roundleft = gameState.rounds
-    if(roundleft > 0){
-      const newGameState ={
+    if(roundleft > 0) {
+      const newGameState = {
         'currentPlayer': user.name,
         'ImageId': randomImage(),
         'state': gameState.state,
@@ -136,23 +139,25 @@ function StartPage(): JSX.Element {
       roundleft = roundleft -1
       setGameState(gameState =>({...gameState ,...newGameState}));
       console.log("updating game");
-      sendGameStateHandler();
+      // sendGameStateHandler();
+      updateOpponentGameState(newGameState);
       setUpdatedstates(false);
-    }
-    else{
+    } else {
       console.log("ending game");
       updategamestate(0,randomImage(),user.name,3);
       setUpdatedstates(false);
     }
   }
 
-  //changing of player
-  useEffect(()=> {
-    if(user.name == gameState.currentPlayer)
-    setplayerturn(false);
-    else
-    setplayerturn(true);
-  },[gameState.currentPlayer])
+  // websocket receive message.
+  // changing of player
+  useEffect(() => {
+    if(user.name == gameState.currentPlayer) {
+      setplayerturn(false);
+    } else {
+      setplayerturn(true);
+    }
+  }, [gameState.currentPlayer])
 
   // send and receive gamestate from backend
   useEffect(() => {
@@ -162,14 +167,19 @@ function StartPage(): JSX.Element {
   
     ws.onmessage = (e) => {
       const gamestate = JSON.parse(e.data);
-      // over here can update game state
-      // for currentplayer use user.name instead of whatever that gets passed here
-      if(JSON.stringify(gameState) != e.data){
-        setGameState(gameState => ({...gameState, ...gamestate}));
-        
-        setUpdatedstates(true);
-        console.log("updating gamestate");
-        console.log(gamestate);
+      // update gamestate if it sent from opponent (basically mean if this is supposed to be this client's turn)
+      console.log(`Received following name ${gamestate.currentPlayer}`);
+      if (user.name !== gamestate.currentPlayer) {
+        // over here can update game state
+        // for currentplayer use user.name instead of whatever that gets passed here
+        if(JSON.stringify(gameState) != e.data) {
+          setGameState(gameState => ({...gameState, ...gamestate}));
+          setUpdatedstates(true);
+          console.log("updating gamestate");
+          console.log(gamestate);
+        }
+      } else {
+        // do nothing
       }
     }
   
@@ -177,6 +187,7 @@ function StartPage(): JSX.Element {
       ws.onclose = () => {
         console.log('WebSocket Disconnected');
         setWs(new WebSocket(websocketUrl));
+        endCallHandler();
       }
     }
   }, [ws.onmessage, ws.onopen, ws.onclose, gameState]);
@@ -197,6 +208,7 @@ function StartPage(): JSX.Element {
     });
   }
 
+  // set userId for statefulCallClient
   useEffect(() => {
     setStatefulCallClient(
       createStatefulCallClient({
@@ -205,6 +217,7 @@ function StartPage(): JSX.Element {
     );
   }, [userId]);
 
+  // setting up communication ui components
   useEffect(() => {
     if (callAgent === undefined && statefulCallClient) {
       const createUserAgent = async (): Promise<void> => {
@@ -214,6 +227,8 @@ function StartPage(): JSX.Element {
     }
   }, [callAgent, statefulCallClient, tokenCredential, displayName]);
 
+  // handle callAgent
+  // setup group call or join group call with this useEffect
   useEffect(() => {
     if (callAgent !== undefined) {
       // find thread
@@ -265,6 +280,7 @@ function StartPage(): JSX.Element {
     }
   },[Updatedstates]);
 
+  //????
   function passUpdateState()
   {
     console.log("updating state to true")

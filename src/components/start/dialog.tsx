@@ -60,9 +60,9 @@ interface Props {
   playerturn: boolean;
   passUpdateState(): void;
   dialogFlag:boolean;
-  }
+}
 
-  interface PropsWithToggle {
+interface PropsWithToggle {
     currentPlayer: string;
     imageId: number;
     state: number;
@@ -71,9 +71,8 @@ interface Props {
     playerturn: boolean;
     toggleHideDialog(): void;
     passUpdateState(): void;
-    dialogFlag:boolean;
-    
-    }
+    dialogFlag:boolean;    
+}
 
 
 export const ButtonDefaultExample: React.FunctionComponent<PropsWithToggle> = props => {
@@ -88,6 +87,7 @@ export const ButtonDefaultExample: React.FunctionComponent<PropsWithToggle> = pr
   function _alertClicked(_imageId:number): void {
    // props.passUpdateState();
     //send the image prop over 
+    console.log(_imageId)
     if(props.imageId===_imageId)
     {
       alert('You are Right!');
@@ -156,14 +156,14 @@ export const ButtonDefaultExample: React.FunctionComponent<PropsWithToggle> = pr
   let num:number =props.imageId;
   if(props.imageId>=9)
   {
-    num =0;
+    num = 0;
   }
   else
   {
     num = props.imageId;
   }
   let subset = allImages.slice(num, num+4)
-  
+  // let subset2 = allImages.slice(num, num+1)
   let subset2 = allImages.slice(num, num+1)
 
   {console.log("image ID" +num)}
@@ -239,7 +239,7 @@ export const DialogBasicExample: React.FunctionComponent<Props> = props => {
     evt.preventDefault();
     alert(`Fetch question ${question}`)
   }
-  { console.log(props.imageId) }
+  { console.log(`Image ID: ${props.imageId}`) }
 
   const modalProps = React.useMemo(
     () => ({
