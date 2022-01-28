@@ -80,7 +80,7 @@ export const ButtonDefaultExample: React.FunctionComponent<PropsWithToggle> = pr
   function checkDialogFlag(dialogFlag:boolean){
     if(dialogFlag)
     {
-      props.toggleHideDialog();
+      // props.toggleHideDialog();
     }
   }
   
