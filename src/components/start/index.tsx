@@ -103,17 +103,19 @@ function StartPage(): JSX.Element {
     console.log(gameState);
     // sendGameStateHandler();
     updateOpponentGameState(newGameState);
-    setUpdatedstates(false);
+    // setUpdatedstates(false);
   }
 
   const updategamestate=(state: number,Image: number,currentplayer:string,rounds:number)=>{
-    setGameState({
+    const gs = {
       'currentPlayer': currentplayer,
       'ImageId': Image,
       'state': state,
       'rounds': rounds,
       'dialogFlag' :false
-    });
+    };
+    setGameState(gs);
+    updateOpponentGameState(gs);
   }
 
   //random image range
@@ -127,7 +129,8 @@ function StartPage(): JSX.Element {
  //update round status
   const updateRounds = () => {
     //haeck to send game stat 
-    var roundleft = gameState.rounds
+    var roundleft = gameState.rounds - 1
+    console.log(roundleft);
     if(roundleft > 0) {
       const newGameState = {
         'currentPlayer': user.name,
@@ -136,16 +139,16 @@ function StartPage(): JSX.Element {
         'rounds': roundleft,
         'dialogFlag': true
       }
-      roundleft = roundleft -1
+      // roundleft = roundleft -1
       setGameState(gameState =>({...gameState ,...newGameState}));
       console.log("updating game");
       // sendGameStateHandler();
       updateOpponentGameState(newGameState);
-      setUpdatedstates(false);
+      // setUpdatedstates(false);
     } else {
       console.log("ending game");
       updategamestate(0,randomImage(),user.name,3);
-      setUpdatedstates(false);
+      // setUpdatedstates(false);
     }
   }
 
@@ -168,13 +171,12 @@ function StartPage(): JSX.Element {
     ws.onmessage = (e) => {
       const gamestate = JSON.parse(e.data);
       // update gamestate if it sent from opponent (basically mean if this is supposed to be this client's turn)
-      console.log(`Received following name ${gamestate.currentPlayer}`);
       if (user.name !== gamestate.currentPlayer) {
         // over here can update game state
         // for currentplayer use user.name instead of whatever that gets passed here
         if(JSON.stringify(gameState) != e.data) {
           setGameState(gameState => ({...gameState, ...gamestate}));
-          setUpdatedstates(true);
+          // setUpdatedstates(true);
           console.log("updating gamestate");
           console.log(gamestate);
         }
@@ -271,20 +273,20 @@ function StartPage(): JSX.Element {
 
   // introduce delay to ensure that newest updated gamestate is sent ( its a workarodu)
   // send updated gamestate to other user
-  useEffect(() => {
-    console.log("last step before updaitng game state , val is ",Updatedstates);
-    if(!Updatedstates){
+  // useEffect(() => {
+  //   console.log("last step before updaitng game state , val is ",Updatedstates);
+  //   if(!Updatedstates){
       
-      sendGameStateHandler();
-      console.log("send");
-    }
-  },[Updatedstates]);
+  //     sendGameStateHandler();
+  //     console.log("send");
+  //   }
+  // },[Updatedstates]);
 
   //????
   function passUpdateState()
   {
     console.log("updating state to true")
-    setUpdatedstates(true);
+    // setUpdatedstates(true);
   }
   //timer count down
 
@@ -321,7 +323,7 @@ function StartPage(): JSX.Element {
       </FluentThemeProvider>
       <Stack className={mergeStyles({ height: '50' , width:'100%',justifyContent: 'center',alignItems:'center',position:'absolute',bottom:69})}>
         {console.log(gameState.ImageId)}
-      {gameState.state === 0?<DevicesButton style ={{ zIndex: '999'}} onClick={StartGame} />: <DialogBasicExample  currentPlayer={gameState.currentPlayer} imageId={gameState.ImageId} state={gameState.state} rounds={gameState.rounds} updateRounds={updateRounds} playerturn={playerturn} passUpdateState={passUpdateState} dialogFlag={gameState.dialogFlag} />}
+      {gameState.state === 0?<DevicesButton style ={{ zIndex: '999'}} onClick={StartGame} />: <DialogBasicExample  currentPlayer={gameState.currentPlayer} imageId={gameState.ImageId} state={gameState.state} rounds={gameState.rounds} updateRounds={updateRounds} playerturn={playerturn} passUpdateState={(passUpdateState)} dialogFlag={gameState.dialogFlag} />}
 
       </Stack>
                   
