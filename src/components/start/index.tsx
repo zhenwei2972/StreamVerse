@@ -70,6 +70,7 @@ function StartPage(): JSX.Element {
     'ImageId': 1,
     'state':0,
     'rounds' :3,
+    'dialogFlag': false
   });
   
   const [ws, setWs] = useState(new WebSocket(websocketUrl));
@@ -87,13 +88,17 @@ function StartPage(): JSX.Element {
 
   //handle game State
   const StartGame =() =>{
-    setGameState({
+    const newGameState = {
       'currentPlayer': user.name,
       'ImageId': 1,
       'state': 1,
       'rounds':3,
-    });
+      'dialogFlag':true
+    }
     console.log("init start game");
+    setGameState(gameState =>({...gameState ,...newGameState}));
+    console.log(gameState);
+    sendGameStateHandler();
     setUpdatedstates(false);
   }
 
@@ -103,6 +108,7 @@ function StartPage(): JSX.Element {
       'ImageId': Image,
       'state': state,
       'rounds': rounds,
+      'dialogFlag' :false
     });
   }
 
@@ -116,18 +122,21 @@ function StartPage(): JSX.Element {
 
  //update round status
   const updateRounds=()=>{
-    //hack to send game state 
-    sendGameStateHandler();
+    //haeck to send game stat 
+    
     var roundleft = gameState.rounds
     if(roundleft > 0){
-      roundleft = roundleft -1
-      setGameState({
+      const newGameState ={
         'currentPlayer': user.name,
         'ImageId': randomImage(),
         'state': gameState.state,
         'rounds': roundleft,
-      });
+        'dialogFlag': true
+      }
+      roundleft = roundleft -1
+      setGameState(gameState =>({...gameState ,...newGameState}));
       console.log("updating game");
+      sendGameStateHandler();
       setUpdatedstates(false);
     }
     else{
@@ -156,12 +165,8 @@ function StartPage(): JSX.Element {
       // over here can update game state
       // for currentplayer use user.name instead of whatever that gets passed here
       if(JSON.stringify(gameState) != e.data){
-        setGameState({
-          'currentPlayer': gamestate.currentPlayer,
-          'ImageId': gamestate.imageId,
-          'state': gamestate.state,
-          'rounds' : gamestate.rounds,
-        });
+        setGameState(gameState => ({...gameState, ...gamestate}));
+        
         setUpdatedstates(true);
         console.log("updating gamestate");
         console.log(gamestate);
@@ -249,6 +254,7 @@ function StartPage(): JSX.Element {
     }
   }, [callAgent]);
 
+  // introduce delay to ensure that newest updated gamestate is sent ( its a workarodu)
   // send updated gamestate to other user
   useEffect(() => {
     console.log("last step before updaitng game state , val is ",Updatedstates);
@@ -298,7 +304,8 @@ function StartPage(): JSX.Element {
         )}
       </FluentThemeProvider>
       <Stack className={mergeStyles({ height: '50' , width:'100%',justifyContent: 'center',alignItems:'center',position:'absolute',bottom:69})}>
-      {gameState.state == 0?<DevicesButton style ={{ zIndex: '999'}} onClick={StartGame} />: <DialogBasicExample  currentPlayer={gameState.currentPlayer} imageId={gameState.ImageId} state={gameState.state} rounds={gameState.rounds} updateRounds={updateRounds} playerturn={playerturn} passUpdateState={passUpdateState} />}
+        {console.log(gameState.ImageId)}
+      {gameState.state === 0?<DevicesButton style ={{ zIndex: '999'}} onClick={StartGame} />: <DialogBasicExample  currentPlayer={gameState.currentPlayer} imageId={gameState.ImageId} state={gameState.state} rounds={gameState.rounds} updateRounds={updateRounds} playerturn={playerturn} passUpdateState={passUpdateState} dialogFlag={gameState.dialogFlag} />}
 
       </Stack>
                   

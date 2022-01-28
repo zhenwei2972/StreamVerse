@@ -40,6 +40,7 @@ const dialogContentProps = {
 const stackTokens: IStackTokens = { childrenGap: 40 };
 
 
+
 export interface GameState {
   // These are set based on the toggles shown above the examples (not needed in real code)
   currentPlayer?: string;
@@ -58,6 +59,7 @@ interface Props {
   updateRounds(): void;
   playerturn: boolean;
   passUpdateState(): void;
+  dialogFlag:boolean;
   }
 
   interface PropsWithToggle {
@@ -69,17 +71,24 @@ interface Props {
     playerturn: boolean;
     toggleHideDialog(): void;
     passUpdateState(): void;
+    dialogFlag:boolean;
     
     }
 
 
 export const ButtonDefaultExample: React.FunctionComponent<PropsWithToggle> = props => {
-  const { currentPlayer, imageId } = props;
+  //const { currentPlayer, imageId } = props;
+  function checkDialogFlag(dialogFlag:boolean){
+    if(dialogFlag)
+    {
+      props.toggleHideDialog();
+    }
+  }
   
   function _alertClicked(_imageId:number): void {
-    props.passUpdateState();
+   // props.passUpdateState();
     //send the image prop over 
-    if(imageId===_imageId)
+    if(props.imageId===_imageId)
     {
       alert('You are Right!');
     }
@@ -144,40 +153,51 @@ export const ButtonDefaultExample: React.FunctionComponent<PropsWithToggle> = pr
     },
   ]
   const [startIndex, setStart ] = useState();
-  let num:number =imageId;
-  if(imageId>=9)
+  let num:number =props.imageId;
+  if(props.imageId>=9)
   {
     num =0;
   }
   else
   {
-    num = imageId;
+    num = props.imageId;
   }
   let subset = allImages.slice(num, num+4)
   
+  let subset2 = allImages.slice(num, num+1)
 
-
-  
+  {console.log("image ID" +num)}
   return (
     <>
+    {checkDialogFlag(props.dialogFlag)}
       {console.log("is it my turn",props.playerturn)}
       {props.playerturn? props.toggleHideDialog() : console.log('not my turn')}
       {
         
         props.playerturn?
         
-      <Stack grow ={true}>
-      <PrimaryButton >
-          <img
-            src={require('../../NaturePictures/' +
-              imageId +
-              '.png')}
-            className="img-fluid"
-            onClick={()=>_alertClicked(imageId)}
-          />
-
-        </PrimaryButton>
-        </Stack>
+     
+        <div style={{textAlign:"center",width:"100%",height:"100%",margin:0,  background:"white", border:"black"}}>
+        {
+        
+        subset2.map((item, index) => (
+          <div style={block}>
+          <button style={{  background:"white", border:"white", paddingTop:"20px"}} key={index} >
+           
+            <img style={{height:"100%", width:"100%"}}
+              src={require('../../NaturePictures/' +
+                item.image +
+                '.png')}
+              className="img-fluid"
+              onClick={()=>_alertClicked(item.number)}
+            />
+  
+          </button >
+          </div>
+        ))
+        }
+        </div>
+    
         :
         
         
@@ -219,7 +239,7 @@ export const DialogBasicExample: React.FunctionComponent<Props> = props => {
     evt.preventDefault();
     alert(`Fetch question ${question}`)
   }
-  { console.log(imageId) }
+  { console.log(props.imageId) }
 
   const modalProps = React.useMemo(
     () => ({
@@ -235,8 +255,9 @@ export const DialogBasicExample: React.FunctionComponent<Props> = props => {
 
   return (
     <>
+     <p style={{fontSize:"20px"}}>{"Describe the picture "}</p>
       <p style={{fontSize:"20px"}}>{"Turn: "+currentPlayer}</p>
-      <PrimaryButton style ={{ zIndex: '999'}}secondaryText="click me to start the game!" onClick={toggleHideDialog} text="Start Game" />
+      <PrimaryButton style ={{ zIndex: '999'}}secondaryText="click me to start the game!" onClick={toggleHideDialog} text="Interact!" />
       <label id={labelId} className={screenReaderOnly}>
        start
       </label>
@@ -251,7 +272,7 @@ export const DialogBasicExample: React.FunctionComponent<Props> = props => {
         modalProps={modalProps}
       >
         <DialogFooter>
-          <ButtonDefaultExample currentPlayer={props.currentPlayer} imageId={props.imageId} state={props.state} rounds={props.rounds} updateRounds={props.updateRounds} playerturn ={props.playerturn} toggleHideDialog={toggleHideDialog} passUpdateState={props.passUpdateState}/>
+          <ButtonDefaultExample currentPlayer={props.currentPlayer} imageId={props.imageId} state={props.state} rounds={props.rounds} updateRounds={props.updateRounds} playerturn ={props.playerturn} toggleHideDialog={toggleHideDialog} passUpdateState={props.passUpdateState} dialogFlag={props.dialogFlag}/>
         </DialogFooter>
       </Dialog>
     </>
