@@ -9,6 +9,7 @@ import { useNavigate  } from "react-router-dom";
  */
 export const SignUpButton = props => {
     const [email, setEmail] = useState();
+    const [name, setName] = useState();
     const [password, setPassword] = useState();
     const [age, setAge] = useState();
     const [gender, setGender] = useState();
@@ -28,6 +29,7 @@ export const SignUpButton = props => {
             password: password,
             age: age,
             gender: gender,
+            name: name,
             nationality: nationality
         }).then(function (response) {
             localStorage.setItem("user", JSON.stringify(response.data));
@@ -50,6 +52,11 @@ export const SignUpButton = props => {
                     borderRadius: 259,
                 }
             }} onChange={e => setEmail(e.target.value)} name="email" label="Email" />
+            <TextField styles={{
+                fieldGroup: {
+                    borderRadius: 259,
+                }
+            }} onChange={e => setName(e.target.value)} name="name" label="Name" />
             <TextField styles={{
                 fieldGroup: {
                     borderRadius: 259,
