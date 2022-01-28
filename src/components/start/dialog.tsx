@@ -87,7 +87,8 @@ export const ButtonDefaultExample: React.FunctionComponent<PropsWithToggle> = pr
   function _alertClicked(_imageId:number): void {
    // props.passUpdateState();
     //send the image prop over 
-    console.log(_imageId)
+    console.log('selected: '  + _imageId)
+    console.log('answer: ' + props.imageId)
     if(props.imageId===_imageId)
     {
       alert('You are Right!');
@@ -166,12 +167,12 @@ export const ButtonDefaultExample: React.FunctionComponent<PropsWithToggle> = pr
   // let subset2 = allImages.slice(num, num+1)
   let subset2 = allImages.slice(num, num+1)
 
-  {console.log("image ID" +num)}
+  // {console.log("image ID" +num)}
   return (
     <>
     {checkDialogFlag(props.dialogFlag)}
       {console.log("is it my turn",props.playerturn)}
-      {props.playerturn? props.toggleHideDialog() : console.log('not my turn')}
+      {/* {props.playerturn? props.toggleHideDialog() : console.log('not my turn')} */}
       {
         
         props.playerturn?
@@ -239,7 +240,7 @@ export const DialogBasicExample: React.FunctionComponent<Props> = props => {
     evt.preventDefault();
     alert(`Fetch question ${question}`)
   }
-  { console.log(`Image ID: ${props.imageId}`) }
+  // { console.log(`Image ID: ${props.imageId}`) }
 
   const modalProps = React.useMemo(
     () => ({
