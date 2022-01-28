@@ -116,7 +116,8 @@ function StartPage(): JSX.Element {
 
  //update round status
   const updateRounds=()=>{
- 
+    //hack to send game state 
+    sendGameStateHandler();
     var roundleft = gameState.rounds
     if(roundleft > 0){
       roundleft = roundleft -1
@@ -250,12 +251,19 @@ function StartPage(): JSX.Element {
 
   // send updated gamestate to other user
   useEffect(() => {
+    console.log("last step before updaitng game state , val is ",Updatedstates);
     if(!Updatedstates){
+      
       sendGameStateHandler();
       console.log("send");
     }
   },[Updatedstates]);
 
+  function passUpdateState()
+  {
+    console.log("updating state to true")
+    setUpdatedstates(true);
+  }
   //timer count down
 
 
@@ -290,7 +298,7 @@ function StartPage(): JSX.Element {
         )}
       </FluentThemeProvider>
       <Stack className={mergeStyles({ height: '50' , width:'100%',justifyContent: 'center',alignItems:'center',position:'absolute',bottom:69})}>
-      {gameState.state == 0?<DevicesButton style ={{ zIndex: '999'}} onClick={StartGame} />: <DialogBasicExample  currentPlayer={gameState.currentPlayer} imageId={gameState.ImageId} state={gameState.state} rounds={gameState.rounds} updateRounds={updateRounds} playerturn={playerturn} />}
+      {gameState.state == 0?<DevicesButton style ={{ zIndex: '999'}} onClick={StartGame} />: <DialogBasicExample  currentPlayer={gameState.currentPlayer} imageId={gameState.ImageId} state={gameState.state} rounds={gameState.rounds} updateRounds={updateRounds} playerturn={playerturn} passUpdateState={passUpdateState} />}
 
       </Stack>
                   

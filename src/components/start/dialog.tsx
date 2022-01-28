@@ -57,6 +57,7 @@ interface Props {
   rounds: number;
   updateRounds(): void;
   playerturn: boolean;
+  passUpdateState(): void;
   }
 
   interface PropsWithToggle {
@@ -67,6 +68,8 @@ interface Props {
     updateRounds(): void;
     playerturn: boolean;
     toggleHideDialog(): void;
+    passUpdateState(): void;
+    
     }
 
 
@@ -74,10 +77,8 @@ export const ButtonDefaultExample: React.FunctionComponent<PropsWithToggle> = pr
   const { currentPlayer, imageId } = props;
   
   function _alertClicked(_imageId:number): void {
+    props.passUpdateState();
     //send the image prop over 
-   
-    
-    
     if(imageId===_imageId)
     {
       alert('You are Right!');
@@ -87,7 +88,8 @@ export const ButtonDefaultExample: React.FunctionComponent<PropsWithToggle> = pr
     }
    
     props.toggleHideDialog();
-    setTimeout(() => {     props.updateRounds(); }, 500);
+    props.updateRounds();
+    setTimeout(() => {      }, 500);
  
    
   }
@@ -158,7 +160,7 @@ export const ButtonDefaultExample: React.FunctionComponent<PropsWithToggle> = pr
   
   return (
     <>
- 
+      {console.log("is it my turn",props.playerturn)}
       {props.playerturn? props.toggleHideDialog() : console.log('not my turn')}
       {
         
@@ -249,7 +251,7 @@ export const DialogBasicExample: React.FunctionComponent<Props> = props => {
         modalProps={modalProps}
       >
         <DialogFooter>
-          <ButtonDefaultExample currentPlayer={props.currentPlayer} imageId={props.imageId} state={props.state} rounds={props.rounds} updateRounds={props.updateRounds} playerturn ={props.playerturn} toggleHideDialog={toggleHideDialog}/>
+          <ButtonDefaultExample currentPlayer={props.currentPlayer} imageId={props.imageId} state={props.state} rounds={props.rounds} updateRounds={props.updateRounds} playerturn ={props.playerturn} toggleHideDialog={toggleHideDialog} passUpdateState={props.passUpdateState}/>
         </DialogFooter>
       </Dialog>
     </>
