@@ -165,7 +165,7 @@ function StartPage(): JSX.Element {
         setUpdatedstates(true);
         console.log("updating gamestate");
         console.log(gamestate);
-    }
+      }
     }
   
     return () => {
@@ -186,7 +186,7 @@ function StartPage(): JSX.Element {
       threadId: threadId
     }, config).then(response => {
       if (callAgent !== undefined) callAgent.dispose(); // terminate group calls
-      navigate('/', { replace: true })
+      navigate('/auth', { replace: true })
     }).catch(function (error) {
       console.log(error);
     });

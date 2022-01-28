@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { PrimaryButton, TextField } from '@fluentui/react/lib';
+import { PrimaryButton, TextField, DefaultButton } from '@fluentui/react/lib';
 import axios from 'axios';
 import { BrowserRouter as Router, Link } from "react-router-dom";
 import { useNavigate  } from "react-router-dom";
@@ -13,6 +13,9 @@ export const SignInButton = props => {
         backgroundColor: '#2766cc',
         color: 'white', marginTop: '1rem', borderRadius: 25, marginLeft: 140
     };
+    const defaultBtnStyle = {
+        marginTop: '1rem', borderRadius: 25, marginLeft: 140
+    };
     const navigate = useNavigate ();
 
     const handleLogin = () => {
@@ -25,7 +28,12 @@ export const SignInButton = props => {
             navigate('/start', { replace: true })
         }).catch(function (error) {
             console.log(error);
+            alert("Problem encountered while logging in. Please check your username/password");
         });
+    }
+
+    const handleSignUpRedirect = () => {
+        navigate('/auth/signUp', { replace: true });
     }
 
     return (
@@ -43,6 +51,7 @@ export const SignInButton = props => {
             }} defaultValue ="" type="password" canRevealPassword={true} onChange={e => setPassword(e.target.value)} name="password" label="Password" />
             
             <PrimaryButton style={btnStyle} text="Sign in" onClick={handleLogin} />
+            <DefaultButton style={defaultBtnStyle} text="Register" onClick={handleSignUpRedirect} />
             
         </div>
     );
